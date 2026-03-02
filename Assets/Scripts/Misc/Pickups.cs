@@ -52,7 +52,7 @@ public class Pickups : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = moveSpeed * Time.deltaTime * moveDir;
+        rb.linearVelocity = moveSpeed * Time.deltaTime * moveDir;
     }
 
     private void OnTriggerEnter2D(Collider2D other)

@@ -24,7 +24,7 @@ public class Knockback : MonoBehaviour
     private IEnumerator KnockRoutine()
     {
         yield return new WaitForSeconds(knockbackTime);
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         GettingKnockedBack = false;
     }
 }
