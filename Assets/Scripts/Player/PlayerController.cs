@@ -85,6 +85,9 @@ public class PlayerController : Singleton<PlayerController>
 
     private void AdjustPlayerFacingDirection()
     {
+        // Không xoay nhân vật khi hành trang đang mở
+        if (InventoryManager.Instance != null && InventoryManager.Instance.IsOpen) return;
+
         Vector3 mousePos = Input.mousePosition;
         Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(transform.position);
 

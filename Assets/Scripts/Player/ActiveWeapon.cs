@@ -62,6 +62,8 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
 
     private void StartAttacking()
     {
+        // Không bắt đầu attack khi hành trang đang mở
+        if (InventoryManager.Instance != null && InventoryManager.Instance.IsOpen) return;
         attackButtonDown = true;
     }
 
@@ -72,6 +74,9 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
 
     private void Attack()
     {
+        // Không attack khi hành trang đang mở
+        if (InventoryManager.Instance != null && InventoryManager.Instance.IsOpen) return;
+
         if (attackButtonDown && !isAttacking && CurrentActiveWeapon)
         {
             AttackCooldown();
