@@ -50,6 +50,49 @@ public class ActiveInventory : Singleton<ActiveInventory>
         ChangeActiveWeapon();
     }
 
+    public void AddItem(WeaponInfo weaponInfo, int amount = 1)
+    {
+        // Try to find a slot that already has this weapon (for stacking)
+        foreach (Transform child in transform)
+        {
+            InventorySlot slot = child.GetComponentInChildren<InventorySlot>();
+            if (slot.GetWeaponInfo() == weaponInfo)
+            {
+                slot.AddToCount(amount);
+                return;
+            }
+        }
+
+        // Find first empty slot
+        foreach (Transform child in transform)
+        {
+            InventorySlot slot = child.GetComponentInChildren<InventorySlot>();
+            if (slot.GetWeaponInfo() == null)
+            {
+                slot.SetWeaponInfo(weaponInfo, amount);
+                ChangeActiveWeapon(); // Update if it was the active slot
+                return;
+            }
+        }
+    }
+
+    public bool UseItem()
+    {
+        Transform childTransform = transform.GetChild(activeSlotIndexNum);
+        InventorySlot inventorySlot = childTransform.GetComponentInChildren<InventorySlot>();
+        
+        if (inventorySlot.GetWeaponInfo() != null && inventorySlot.GetCount() > 0)
+        {
+            inventorySlot.UseItem();
+            if (inventorySlot.GetWeaponInfo() == null)
+            {
+                ChangeActiveWeapon();
+            }
+            return true;
+        }
+        return false;
+    }
+
     private void ChangeActiveWeapon()
     {
         if (PlayerHealth.Instance.IsDead) { return; }

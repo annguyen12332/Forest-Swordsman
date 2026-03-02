@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 2D RPG project
 
 This project was based off the Gamedev.tv Unity 2D RPG: Complete Combat System course. It is a classic 2D top-down RPG built in Unity including:
@@ -32,3 +33,6 @@ Left Mouse Click
 #### Dash
 
 Spacebar key
+=======
+# Forest-Swordsman
+>>>>>>> 542475ca0b458d2c02564198d841d3bc038461fb
