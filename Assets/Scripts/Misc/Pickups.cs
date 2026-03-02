@@ -8,10 +8,12 @@ public class Pickups : MonoBehaviour
     {
         GoldCoin,
         StaminaGlobe,
-        HealthGlobe
+        HealthGlobe,
+        Boom
     }
 
     [SerializeField] private PickupType pickupType;
+    [SerializeField] private WeaponInfo boomWeaponInfo;
     [SerializeField] private float pickupDistance = 5f;
     [SerializeField] private float accelerationRate = .2f;
     [SerializeField] private float moveSpeed = 3f;
@@ -52,7 +54,9 @@ public class Pickups : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.linearVelocity = moveSpeed * Time.deltaTime * moveDir;
+        if (rb != null) {
+            rb.linearVelocity = moveSpeed * Time.deltaTime * moveDir;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -93,6 +97,9 @@ public class Pickups : MonoBehaviour
                 break;
             case PickupType.StaminaGlobe:
                 Stamina.Instance.RefreshStamina();
+                break;
+            case PickupType.Boom:
+                ActiveInventory.Instance.AddItem(boomWeaponInfo);
                 break;
             default:
                 break;
