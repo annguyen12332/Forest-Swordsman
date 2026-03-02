@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,32 +5,34 @@ public class CursorManager : MonoBehaviour
 {
     private Image image;
 
-    private void Awake() {
+    private void Awake()
+    {
         image = GetComponent<Image>();
+        // Custom cursor KHÔNG BAO GIỜ chặn click UI
+        image.raycastTarget = false;
     }
 
     private void Start()
     {
         Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.None;
+    }
 
-        if (Application.isPlaying)
+    private void Update()
+    {
+        // Đọc static field trực tiếp — không qua Instance, không bị null
+        bool inventoryOpen = InventoryManager.IsInventoryOpen;
+
+        if (inventoryOpen)
         {
-            Cursor.lockState = CursorLockMode.None;
+            image.enabled = false;
+            Cursor.visible = true;
         }
         else
         {
-            Cursor.lockState = CursorLockMode.Confined;
+            image.enabled = true;
+            Cursor.visible = false;
+            image.rectTransform.position = Input.mousePosition;
         }
-    }
-
-    private void Update() {
-        Vector2 cursorPos = Input.mousePosition;
-        image.rectTransform.position = cursorPos;
-
-        /* if (!Application.isPlaying)
-        {
-            return;
-        }
-        Cursor.visible = false; */
     }
 }
