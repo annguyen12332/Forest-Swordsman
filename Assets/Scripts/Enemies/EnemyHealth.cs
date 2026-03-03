@@ -11,21 +11,25 @@ public class EnemyHealth : MonoBehaviour
     private int currentHealth;
     private Knockback knockback;
     private Flash flash;
+    private EnemyHealthBar enemyHealthBar;
 
     private void Awake()
     {
         flash = GetComponent<Flash>();
         knockback = GetComponent<Knockback>();
+        enemyHealthBar = GetComponentInChildren<EnemyHealthBar>();
     }
 
     private void Start()
     {
         currentHealth = startingHealth;
+        enemyHealthBar?.SetMaxHealth(startingHealth);
     }
 
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+        enemyHealthBar?.TakeDamage(currentHealth);
         knockback.GetKnockedBack(PlayerController.Instance.transform, knockbackThrust);
         StartCoroutine(flash.FlashRoutine());
         StartCoroutine(CheckDetectDeathRoutine());
