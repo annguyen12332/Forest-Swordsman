@@ -67,13 +67,57 @@ public class ActiveInventory : Singleton<ActiveInventory>
         foreach (Transform child in transform)
         {
             InventorySlot slot = child.GetComponentInChildren<InventorySlot>();
-            if (slot.GetWeaponInfo() == null)
+            if (slot.IsEmpty())
             {
                 slot.SetWeaponInfo(weaponInfo, amount);
-                ChangeActiveWeapon(); // Update if it was the active slot
+                ChangeActiveWeapon();
                 return;
             }
         }
+    }
+
+    public void AddHeartItem(HeartItemInfo heartItemInfo, int amount = 1)
+    {
+        // Stack vào slot đang có tim cùng loại
+        foreach (Transform child in transform)
+        {
+            InventorySlot slot = child.GetComponentInChildren<InventorySlot>();
+            if (slot.GetHeartItemInfo() == heartItemInfo)
+            {
+                slot.AddToCount(amount);
+                if (HeartHUD.Instance != null) HeartHUD.Instance.AddHeart(amount);
+                return;
+            }
+        }
+
+        // Tìm slot rỗng
+        foreach (Transform child in transform)
+        {
+            InventorySlot slot = child.GetComponentInChildren<InventorySlot>();
+            if (slot.IsEmpty())
+            {
+                slot.SetHeartItem(heartItemInfo, amount);
+                if (HeartHUD.Instance != null) HeartHUD.Instance.AddHeart(amount);
+                return;
+            }
+        }
+    }
+
+    public void UseHeartItem()
+    {
+        // Tìm slot đầu tiên có tim
+        foreach (Transform child in transform)
+        {
+            InventorySlot slot = child.GetComponentInChildren<InventorySlot>();
+            if (slot.GetHeartItemInfo() != null && slot.GetCount() > 0)
+            {
+                slot.UseItem();                                             // luôn trừ count
+                if (HeartHUD.Instance != null) HeartHUD.Instance.UseHeart(); // cập nhật HUD
+                PlayerHealth.Instance.HealPlayer();                        // hồi máu
+                return;
+            }
+        }
+        Debug.Log("[ActiveInventory] Không có tim trong hành trang.");
     }
 
     public bool UseItem()

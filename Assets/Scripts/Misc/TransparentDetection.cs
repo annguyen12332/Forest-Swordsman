@@ -24,14 +24,15 @@ public class TransparentDetection : MonoBehaviour
         {
             if (spriteRenderer)
             {
-                StartCoroutine(FadeRoutine(spriteRenderer, fadeTime, spriteRenderer.color.a, transparencyAmount));
+                if (gameObject.activeInHierarchy)
+                    StartCoroutine(FadeRoutine(spriteRenderer, fadeTime, spriteRenderer.color.a, transparencyAmount));
+                else
+                    spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, transparencyAmount);
             }
             else if (tilemap)
             {
                 if (tilemap.isActiveAndEnabled)
-                {
                     StartCoroutine(FadeRoutine(tilemap, fadeTime, tilemap.color.a, transparencyAmount));
-                }
             }
         }
     }
@@ -43,14 +44,15 @@ public class TransparentDetection : MonoBehaviour
         {
             if (spriteRenderer)
             {
-                StartCoroutine(FadeRoutine(spriteRenderer, fadeTime, spriteRenderer.color.a, baseTransparancy));
+                if (gameObject.activeInHierarchy)
+                    StartCoroutine(FadeRoutine(spriteRenderer, fadeTime, spriteRenderer.color.a, baseTransparancy));
+                else
+                    spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, baseTransparancy);
             }
             else if (tilemap)
             {
                 if (tilemap.isActiveAndEnabled)
-                {
                     StartCoroutine(FadeRoutine(tilemap, fadeTime, tilemap.color.a, baseTransparancy));
-                }
             }
         }
     }
