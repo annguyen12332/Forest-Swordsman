@@ -50,11 +50,8 @@ public class PlayerHealth : Singleton<PlayerHealth>
 
     public void HealPlayer()
     {
-        if (currentHealth < maxHealth)
-        {
-            currentHealth += 1;
-            UpdateHealthSlider();
-        }
+        currentHealth = Mathf.Min(currentHealth + 1, maxHealth);
+        UpdateHealthSlider();
     }
 
     public void TakeDamage(int damageAmount, Transform hitTransform)

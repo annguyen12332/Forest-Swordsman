@@ -19,28 +19,44 @@ public class InventorySlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
         if (slotImage != null)
         {
             slotImage.color = normalColor;
-            // Đảm bảo slot nhận click/hover
             slotImage.raycastTarget = true;
         }
     }
 
-    // Chuột vào slot → highlight
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (slotImage != null)
             slotImage.color = highlightColor;
+
+        InventorySlot slot = GetComponentInChildren<InventorySlot>();
+        if (slot != null && slot.GetHeartItemInfo() != null && slot.GetCount() > 0)
+        {
+            // Slot có tim → hiện popup Use
+            if (UseItemPopup.Instance != null)
+                UseItemPopup.Instance.Show(transform.position, GetComponent<RectTransform>());
+        }
+        else
+        {
+            // Slot không có item → ẩn popup
+            if (UseItemPopup.Instance != null)
+                UseItemPopup.Instance.Hide();
+        }
     }
 
-    // Chuột rời slot → trở về màu thường
     public void OnPointerExit(PointerEventData eventData)
     {
         if (slotImage != null)
             slotImage.color = normalColor;
+
+        // Không hide ở đây — Update() trong UseItemPopup tự xử lý
+        // (tránh trường hợp chuột đi qua popup khi di sang slot kề)
     }
 
-    // Click vào slot (mở rộng sau: equip item, show tooltip...)
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("Slot clicked: " + gameObject.name);
+        // Click slot không có item → ẩn popup
+        if (UseItemPopup.Instance != null)
+            UseItemPopup.Instance.Hide();
     }
 }
+

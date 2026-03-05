@@ -8,27 +8,57 @@ public class EconomyManager : Singleton<EconomyManager>
     // Kéo "Gold Amount Text" trên HUD vào đây trong Inspector
     [SerializeField] private TMP_Text hudGoldText;
 
-    // Kéo "Gold Amount Text" (hoặc text xu) trong InventoryPanel vào đây
+    // Kéo text xu bên trong InventoryPanel vào đây trong Inspector
     [SerializeField] private TMP_Text inventoryGoldText;
 
     public int CurrentGold => currentGold;
 
-    public void UpdateCurrentGold()
+    private void Start()
     {
-        currentGold += 1;
+        // Tự động tìm HUD text nếu chưa gán
+        if (hudGoldText == null)
+        {
+            GameObject go = GameObject.Find("Gold Amount Text");
+            if (go != null) hudGoldText = go.GetComponent<TMP_Text>();
+            if (hudGoldText == null)
+                Debug.LogWarning("EconomyManager: Không tìm thấy 'Gold Amount Text' trên HUD! Hãy gán trong Inspector.");
+        }
+
+        // Tự động tìm inventory text nếu chưa gán
+        // Dùng Resources.FindObjectsOfTypeAll để tìm cả object inactive
+        if (inventoryGoldText == null)
+        {
+            TMP_Text[] allTexts = Resources.FindObjectsOfTypeAll<TMP_Text>();
+            foreach (var t in allTexts)
+            {
+                if (t.gameObject.name == "Inventory Gold Text")
+                {
+                    inventoryGoldText = t;
+                    break;
+                }
+            }
+        }
+
         RefreshGoldUI();
     }
 
-    private void RefreshGoldUI()
+    public void UpdateCurrentGold(int amount = 1)
+    {
+        currentGold += amount;
+        Debug.Log($"[EconomyManager] Nhặt xu! currentGold = {currentGold}");
+        RefreshGoldUI();
+    }
+
+    public void RefreshGoldUI()
     {
         string goldStr = currentGold.ToString("D3");
 
-        // Cập nhật số xu trên HUD
         if (hudGoldText != null)
             hudGoldText.text = goldStr;
 
-        // Cập nhật số xu trong Inventory Panel
         if (inventoryGoldText != null)
             inventoryGoldText.text = goldStr;
     }
 }
+
+

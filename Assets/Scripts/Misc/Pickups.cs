@@ -14,9 +14,12 @@ public class Pickups : MonoBehaviour
 
     [SerializeField] private PickupType pickupType;
     [SerializeField] private WeaponInfo boomWeaponInfo;
+    [SerializeField] private HeartItemInfo heartItemInfo;
     [SerializeField] private float pickupDistance = 5f;
     [SerializeField] private float accelerationRate = .2f;
     [SerializeField] private float moveSpeed = 3f;
+
+    private float currentMoveSpeed;
     [SerializeField] private AnimationCurve animCurve;
     [SerializeField] private float heightY = 1.5f;
     [SerializeField] private float popDuration = 1f;
@@ -27,6 +30,7 @@ public class Pickups : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        currentMoveSpeed = 0f;
     }
 
     private void Start()
@@ -38,24 +42,26 @@ public class Pickups : MonoBehaviour
 
     private void Update()
     {
+        if (PlayerController.Instance == null) return;
         Vector3 playerPos = PlayerController.Instance.transform.position;
 
         if (Vector3.Distance(transform.position, playerPos) < pickupDistance)
         {
             moveDir = (playerPos - transform.position).normalized;
-            moveSpeed += accelerationRate;
+            currentMoveSpeed += accelerationRate;
         }
         else
         {
             moveDir = Vector3.zero;
-            moveSpeed = 0f;
+            currentMoveSpeed = 0f;
         }
     }
 
     private void FixedUpdate()
     {
-        if (rb != null) {
-            rb.linearVelocity = moveSpeed * Time.deltaTime * moveDir;
+        if (rb != null)
+        {
+            rb.linearVelocity = (moveSpeed + currentMoveSpeed) * Time.fixedDeltaTime * moveDir;
         }
     }
 
@@ -90,16 +96,24 @@ public class Pickups : MonoBehaviour
         switch (pickupType)
         {
             case PickupType.GoldCoin:
-                EconomyManager.Instance.UpdateCurrentGold();
+                if (EconomyManager.Instance != null)
+                    EconomyManager.Instance.UpdateCurrentGold();
+                else
+                    Debug.LogError("Pickups: EconomyManager.Instance is null! Make sure EconomyManager is in the scene.");
                 break;
             case PickupType.HealthGlobe:
-                PlayerHealth.Instance.HealPlayer();
+                if (InventoryManager.Instance != null && heartItemInfo != null)
+                    InventoryManager.Instance.AddHeartItem(heartItemInfo);
+                else if (heartItemInfo == null)
+                    Debug.LogWarning("Pickups: heartItemInfo chưa gán trong Inspector!");
                 break;
             case PickupType.StaminaGlobe:
-                Stamina.Instance.RefreshStamina();
+                if (Stamina.Instance != null)
+                    Stamina.Instance.RefreshStamina();
                 break;
             case PickupType.Boom:
-                ActiveInventory.Instance.AddItem(boomWeaponInfo);
+                if (ActiveInventory.Instance != null)
+                    ActiveInventory.Instance.AddItem(boomWeaponInfo);
                 break;
             default:
                 break;

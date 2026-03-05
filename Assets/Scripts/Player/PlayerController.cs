@@ -55,6 +55,13 @@ public class PlayerController : Singleton<PlayerController>
     private void Update()
     {
         PlayerInput();
+
+        // Phím Z: dùng tim hồi máu (chỉ khi hành trang đóng)
+        if (Input.GetKeyDown(KeyCode.Z) && !InventoryManager.IsInventoryOpen)
+        {
+            if (InventoryManager.Instance != null)
+                InventoryManager.Instance.UseHeartItem();
+        }
     }
 
     private void FixedUpdate()
