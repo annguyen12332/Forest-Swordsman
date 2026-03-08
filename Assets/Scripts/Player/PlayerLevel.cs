@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class PlayerLevel : Singleton<PlayerLevel>
 {
@@ -29,6 +30,24 @@ public class PlayerLevel : Singleton<PlayerLevel>
     private void Start()
     {
         LoadLevelData();
+        UpdateUI();
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Cần gán ref về null để ép hàm UpdateUI() fetch lại UI Canvas của scene mới
+        xpSlider = null;
+        levelText = null;
         UpdateUI();
     }
 
