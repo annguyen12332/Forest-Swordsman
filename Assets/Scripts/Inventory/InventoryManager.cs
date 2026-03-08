@@ -8,6 +8,11 @@ public class InventoryManager : Singleton<InventoryManager>
     [SerializeField] private Button closeButton;
     [SerializeField] private Transform inventoryGrid; // kéo InventoryGrid vào đây
 
+    [Header("Save Data Refs (Gán trong Inspector)")]
+    public GemItemInfo saveGemRef;
+    public HeartItemInfo saveHeartRef;
+    private bool isLoadingData = false;
+
     // Luôn lấy thẳng từ Panel — không bao giờ bị lệch với thực tế
     public static bool IsInventoryOpen => Instance != null && Instance.inventoryPanel != null && Instance.inventoryPanel.activeSelf;
     public bool IsOpen => IsInventoryOpen;
@@ -60,6 +65,38 @@ public class InventoryManager : Singleton<InventoryManager>
             closeButton.onClick.AddListener(CloseInventory);
         else
             Debug.LogWarning("InventoryManager: Không tìm thấy CloseButton!");
+
+        // Khôi phục Gems và Hearts từ file JSON
+        if (SaveManager.Instance != null)
+        {
+            isLoadingData = true;
+            if (saveGemRef != null && SaveManager.Instance.Data.gemCount > 0)
+                AddGemItem(saveGemRef, SaveManager.Instance.Data.gemCount);
+
+            if (saveHeartRef != null && SaveManager.Instance.Data.heartCount > 0)
+                AddHeartItem(saveHeartRef, SaveManager.Instance.Data.heartCount);
+            isLoadingData = false;
+        }
+    }
+
+    private void SaveInventoryData()
+    {
+        if (SaveManager.Instance == null || isLoadingData) return;
+        
+        int totalGems = 0;
+        int totalHearts = 0;
+        foreach (Transform child in inventoryGrid)
+        {
+            InventorySlot slot = child.GetComponentInChildren<InventorySlot>();
+            if (slot != null)
+            {
+                if (slot.GetGemItemInfo() != null) totalGems += slot.GetCount();
+                if (slot.GetHeartItemInfo() != null) totalHearts += slot.GetCount();
+            }
+        }
+        SaveManager.Instance.Data.gemCount = totalGems;
+        SaveManager.Instance.Data.heartCount = totalHearts;
+        SaveManager.Instance.SaveGame();
     }
 
     private void Update()
@@ -146,6 +183,7 @@ public class InventoryManager : Singleton<InventoryManager>
             {
                 slot.AddToCount(amount);
                 if (HeartHUD.Instance != null) HeartHUD.Instance.AddHeart(amount);
+                SaveInventoryData();
                 return;
             }
         }
@@ -159,6 +197,7 @@ public class InventoryManager : Singleton<InventoryManager>
             {
                 slot.SetHeartItem(heartItemInfo, amount);
                 if (HeartHUD.Instance != null) HeartHUD.Instance.AddHeart(amount);
+                SaveInventoryData();
                 return;
             }
         }
@@ -191,6 +230,7 @@ public class InventoryManager : Singleton<InventoryManager>
             slot.UseItem();
             if (HeartHUD.Instance != null) HeartHUD.Instance.UseHeart();
             if (PlayerHealth.Instance != null) PlayerHealth.Instance.HealPlayer();
+            SaveInventoryData();
         }
     }
 
@@ -208,6 +248,7 @@ public class InventoryManager : Singleton<InventoryManager>
             if (slot.GetGemItemInfo() == gemItemInfo)
             {
                 slot.AddToCount(amount);
+                SaveInventoryData();
                 return;
             }
         }
@@ -220,6 +261,7 @@ public class InventoryManager : Singleton<InventoryManager>
             if (slot.IsEmpty())
             {
                 slot.SetGemItem(gemItemInfo, amount);
+                SaveInventoryData();
                 return;
             }
         }
@@ -262,6 +304,7 @@ public class InventoryManager : Singleton<InventoryManager>
                     for(int i = 0; i < remainingToRemove; i++) 
                          slot.UseItem(); // Trừ dần trong slot
                          
+                    SaveInventoryData();
                     return; // Đã xong
                 }
                 else
