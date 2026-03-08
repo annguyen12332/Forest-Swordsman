@@ -16,8 +16,12 @@ public class SaveManager : Singleton<SaveManager>
 
     public void SaveGame()
     {
-        // Ghi lại scene đang chơi trước khi lưu
-        Data.lastSceneName = SceneManager.GetActiveScene().name;
+        // Ghi lại scene đang chơi trước khi lưu. Bỏ qua MainMenu để không làm hỏng nút Continue.
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (currentScene != "MainMenu")
+        {
+            Data.lastSceneName = currentScene;
+        }
 
         string json = JsonUtility.ToJson(Data, true);
         File.WriteAllText(saveFilePath, json);
@@ -42,7 +46,7 @@ public class SaveManager : Singleton<SaveManager>
     // Trả về true nếu tồn tại save file và có scene hợp lệ
     public bool HasSave()
     {
-        return File.Exists(saveFilePath) && !string.IsNullOrEmpty(Data.lastSceneName);
+        return File.Exists(saveFilePath) && !string.IsNullOrEmpty(Data.lastSceneName) && Data.lastSceneName != "MainMenu";
     }
 
     // Reset toàn bộ dữ liệu (dùng khi New Game)
