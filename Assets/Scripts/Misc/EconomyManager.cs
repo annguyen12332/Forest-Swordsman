@@ -15,27 +15,18 @@ public class EconomyManager : Singleton<EconomyManager>
 
     private void Start()
     {
-        // Tự động tìm HUD text nếu chưa gán
-        if (hudGoldText == null)
-        {
-            GameObject go = GameObject.Find("Gold Amount Text");
-            if (go != null) hudGoldText = go.GetComponent<TMP_Text>();
-            if (hudGoldText == null)
-                Debug.LogWarning("EconomyManager: Không tìm thấy 'Gold Amount Text' trên HUD! Hãy gán trong Inspector.");
-        }
-
-        // Tự động tìm inventory text nếu chưa gán
-        // Dùng Resources.FindObjectsOfTypeAll để tìm cả object inactive
-        if (inventoryGoldText == null)
+        // Dùng FindObjectsOfTypeAll để tìm được cả object inactive (trong panel ẩn)
+        if (hudGoldText == null || inventoryGoldText == null)
         {
             TMP_Text[] allTexts = Resources.FindObjectsOfTypeAll<TMP_Text>();
             foreach (var t in allTexts)
             {
-                if (t.gameObject.name == "Inventory Gold Text")
-                {
+                if (hudGoldText == null && t.gameObject.name == "Gold Amount Text")
+                    hudGoldText = t;
+                if (inventoryGoldText == null && t.gameObject.name == "Inventory Gold Text")
                     inventoryGoldText = t;
+                if (hudGoldText != null && inventoryGoldText != null)
                     break;
-                }
             }
         }
 

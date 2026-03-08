@@ -20,16 +20,18 @@ public class CursorManager : MonoBehaviour
 
     private void Update()
     {
-        // Đọc static field trực tiếp — không qua Instance, không bị null
         bool inventoryOpen = InventoryManager.IsInventoryOpen;
+        bool pauseOpen     = PauseMenuController.IsPauseMenuOpen;
 
-        if (inventoryOpen)
+        if (inventoryOpen || pauseOpen)
         {
+            // Ẩn cursor tùy chỉnh, hiện system cursor để click được nút UI
             image.enabled = false;
             Cursor.visible = true;
         }
         else
         {
+            // Gameplay: dùng cursor tùy chỉnh, ẩn system cursor
             image.enabled = true;
             Cursor.visible = false;
             image.rectTransform.position = Input.mousePosition;
