@@ -119,6 +119,7 @@ GameObject:
   - component: {fileID: 7566220026503220871}
   - component: {fileID: 3864271260038148799}
   - component: {fileID: 2239846173845580151}
+  - component: {fileID: 96175227886112606}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -376,6 +377,22 @@ MonoBehaviour:
   fullStaminaImage: {fileID: 21300000, guid: da0145d922e3b794abe8e592acdaa52f, type: 3}
   emptyStaminaImage: {fileID: 21300000, guid: 913558e2e7af1f44388bf6c0c9dccef5, type: 3}
   timeBetweenStaminaRefresh: 3
+--- !u!114 &96175227886112606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4323490194688800194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f2e864d74566cd419da6948772086eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLevel
+  baseXPRequirement: 100
+  xpMultiplierPerLevel: 1.5
+  xpSlider: {fileID: 0}
+  levelText: {fileID: 0}
 --- !u!1 &5871567657637277370
 GameObject:
   m_ObjectHideFlags: 0
