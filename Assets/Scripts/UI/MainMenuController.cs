@@ -21,7 +21,10 @@ public class MainMenuController : MonoBehaviour
     {
         // Nếu đang có màn hình UIFade đen (ví dụ: vừa rời gameplay),
         // fade về trong suốt để main menu hiện thị đúng cách.
-        UIFade.Instance?.FadeToClear();
+        if (UIFade.Instance != null && UIFade.Instance.isActiveAndEnabled)
+        {
+            UIFade.Instance.FadeToClear();
+        }
 
         // Phương án X: đảm bảo system cursor luôn hiện ở Main Menu
         // (tránh bị kẹt ẩn khi chuyển từ gameplay/pause sang menu).
