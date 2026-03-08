@@ -3,12 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIFade : Singleton<UIFade>
+public class UIFade : MonoBehaviour
 {
+    public static UIFade Instance { get; private set; }
     [SerializeField] private Image fadeScreen;
     [SerializeField] private float fadeSpeed = 1f;
 
     private IEnumerator fadeRoutine;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        Instance = this;
+    }
 
     public void FadeToBlack()
     {

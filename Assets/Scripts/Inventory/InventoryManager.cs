@@ -2,8 +2,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class InventoryManager : Singleton<InventoryManager>
+public class InventoryManager : MonoBehaviour
 {
+    public static InventoryManager Instance { get; private set; }
+
     [SerializeField] private GameObject inventoryPanel;
     [SerializeField] private Button closeButton;
     [SerializeField] private Transform inventoryGrid; // kéo InventoryGrid vào đây
@@ -20,9 +22,15 @@ public class InventoryManager : Singleton<InventoryManager>
     private RectTransform panelRect;
     private Vector2 originalPosition;
 
-    protected override void Awake()
+    protected void Awake()
     {
-        base.Awake();
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        Instance = this;
+
         if (inventoryPanel != null)
         {
             panelRect = inventoryPanel.GetComponent<RectTransform>();

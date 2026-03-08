@@ -14,8 +14,10 @@ public struct UpgradeLevelData
     public int extraDamage; 
 }
 
-public class WeaponUpgradeManager : Singleton<WeaponUpgradeManager>
+public class WeaponUpgradeManager : MonoBehaviour
 {
+    public static WeaponUpgradeManager Instance { get; private set; }
+
     [Header("UI Reference")]
     [SerializeField] private GameObject upgradePanel;
     [SerializeField] private Image weaponIconImage;
@@ -40,9 +42,14 @@ public class WeaponUpgradeManager : Singleton<WeaponUpgradeManager>
 
     public bool IsOpen => upgradePanel != null && upgradePanel.activeSelf;
 
-    protected override void Awake()
+    protected void Awake()
     {
-        base.Awake();
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        Instance = this;
         
         if (upgradePanel != null)
         {
