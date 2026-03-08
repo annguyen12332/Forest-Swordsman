@@ -52,10 +52,14 @@ public class EconomyManager : Singleton<EconomyManager>
             TMP_Text[] allTexts = Resources.FindObjectsOfTypeAll<TMP_Text>();
             foreach (var t in allTexts)
             {
+                // Bỏ qua các object thuộc Prefab chưa instantiate (chỉ có Editor mới bị lỗi này)
+                if (t.gameObject.scene.name == null || !t.gameObject.scene.IsValid()) continue;
+
                 if (hudGoldText == null && t.gameObject.name == "Gold Amount Text")
                     hudGoldText = t;
                 if (inventoryGoldText == null && t.gameObject.name == "Inventory Gold Text")
                     inventoryGoldText = t;
+                
                 if (hudGoldText != null && inventoryGoldText != null)
                     break;
             }
