@@ -12,15 +12,24 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
 
     protected override void Awake()
     {
+        playerControls = new PlayerControls(); // khởi tạo trước base.Awake()
         base.Awake();
-
-        playerControls = new PlayerControls();
-
     }
 
     private void OnEnable()
     {
-        playerControls.Enable();
+        playerControls?.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerControls?.Disable();
+    }
+
+    private void OnDestroy()
+    {
+        playerControls?.Dispose();
+        playerControls = null;
     }
 
     private void Start()

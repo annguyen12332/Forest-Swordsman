@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.IO;
 
 public class SaveManager : Singleton<SaveManager>
@@ -15,10 +16,10 @@ public class SaveManager : Singleton<SaveManager>
 
     public void SaveGame()
     {
-        // Chuyển Data thành JSON
+        // Ghi lại scene đang chơi trước khi lưu
+        Data.lastSceneName = SceneManager.GetActiveScene().name;
+
         string json = JsonUtility.ToJson(Data, true);
-        
-        // Ghi vào file
         File.WriteAllText(saveFilePath, json);
         Debug.Log("Đã lưu dữ liệu định dạng JSON tại: " + saveFilePath);
     }
@@ -36,6 +37,21 @@ public class SaveManager : Singleton<SaveManager>
             Debug.Log("Không có file Save. Mở file Data gốc.");
             Data = new GameData();
         }
+    }
+
+    // Trả về true nếu tồn tại save file và có scene hợp lệ
+    public bool HasSave()
+    {
+        return File.Exists(saveFilePath) && !string.IsNullOrEmpty(Data.lastSceneName);
+    }
+
+    // Reset toàn bộ dữ liệu (dùng khi New Game)
+    public void ResetData()
+    {
+        Data = new GameData();
+        if (File.Exists(saveFilePath))
+            File.Delete(saveFilePath);
+        Debug.Log("Đã xóa save cũ, bắt đầu game mới.");
     }
 
     private void OnApplicationQuit()

@@ -24,9 +24,9 @@ public class PlayerController : Singleton<PlayerController>
 
     protected override void Awake()
     {
+        playerControls = new PlayerControls(); // khởi tạo trước base.Awake() để OnDisable luôn có object hợp lệ
         base.Awake();
 
-        playerControls = new PlayerControls();
         rb = GetComponent<Rigidbody2D>();
         myAnimator = GetComponent<Animator>();
         mySpriteRenderer = GetComponent<SpriteRenderer>();
@@ -45,12 +45,18 @@ public class PlayerController : Singleton<PlayerController>
 
     private void OnEnable()
     {
-        playerControls.Enable();
+        playerControls?.Enable();
     }
 
     private void OnDisable()
     {
-        playerControls.Disable();
+        playerControls?.Disable();
+    }
+
+    private void OnDestroy()
+    {
+        playerControls?.Dispose();
+        playerControls = null;
     }
 
     private void Update()
@@ -86,6 +92,8 @@ public class PlayerController : Singleton<PlayerController>
 
     private void PlayerInput()
     {
+        if (playerControls == null) return;
+
         movement = playerControls.Movement.Move.ReadValue<Vector2>();
 
         myAnimator.SetFloat("moveX", movement.x);
@@ -94,6 +102,7 @@ public class PlayerController : Singleton<PlayerController>
 
     private void Move()
     {
+        if (knockback == null || PlayerHealth.Instance == null) return;
         if (knockback.GettingKnockedBack || PlayerHealth.Instance.IsDead) { return; }
 
         rb.MovePosition(rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
