@@ -707,17 +707,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5697530421835459679, guid: f7f859bb741df06489de75ca44cb03c7, type: 3}
   m_PrefabInstance: {fileID: 177773763}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &180254087 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6125756868333669828, guid: 6f6b64e6ace6a3148b1e25bd7a663c45, type: 3}
-  m_PrefabInstance: {fileID: 1959496387}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1001 &246401964
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1290,17 +1279,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4795784345540944218, guid: aee9da07a174fe14c839b79785fdb1b5, type: 3}
   m_PrefabInstance: {fileID: 419629602}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &420145744 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 96146447765695158, guid: 6f6b64e6ace6a3148b1e25bd7a663c45, type: 3}
-  m_PrefabInstance: {fileID: 1959496387}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!4 &450914352 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1776341587564464437, guid: 9d8bba5421abf5046981585a288d7d01, type: 3}
@@ -10218,14 +10196,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 96175227886112606, guid: 8130182051cbea34b822d6fa6ec4ae60, type: 3}
-      propertyPath: xpSlider
-      value: 
-      objectReference: {fileID: 180254087}
-    - target: {fileID: 96175227886112606, guid: 8130182051cbea34b822d6fa6ec4ae60, type: 3}
-      propertyPath: levelText
-      value: 
-      objectReference: {fileID: 420145744}
     - target: {fileID: 4323490194688800194, guid: 8130182051cbea34b822d6fa6ec4ae60, type: 3}
       propertyPath: m_Name
       value: Player
@@ -18440,10 +18410,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 933200008695572924, guid: 6f6b64e6ace6a3148b1e25bd7a663c45, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1973506355346564705, guid: 6f6b64e6ace6a3148b1e25bd7a663c45, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
