@@ -14,6 +14,9 @@ public class GameData
 
     // Lưu dữ liệu cấp độ của các loại vũ khí theo tên file ScriptableObject
     public List<WeaponSaveData> weaponsData = new List<WeaponSaveData>();
+
+    // Lưu tên scene cuối cùng để Continue load đúng chỗ
+    public string lastSceneName = "";
 }
 
 [System.Serializable]
