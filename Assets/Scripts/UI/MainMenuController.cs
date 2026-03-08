@@ -66,7 +66,13 @@ public class MainMenuController : MonoBehaviour
     {
         if (SaveManager.Instance != null && SaveManager.Instance.HasSave())
         {
-            SceneManager.LoadScene(SaveManager.Instance.Data.lastSceneName);
+            string sceneToLoad = SaveManager.Instance.Data.lastSceneName;
+            // Phục hồi cho các file save cũ bị lỗi ghi đè tên scene là MainMenu
+            if (sceneToLoad == "MainMenu" || string.IsNullOrEmpty(sceneToLoad))
+            {
+                sceneToLoad = newGameScene;
+            }
+            SceneManager.LoadScene(sceneToLoad);
         }
         else
         {

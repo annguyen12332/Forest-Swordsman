@@ -34,7 +34,7 @@ public class SaveManager : Singleton<SaveManager>
         {
             string json = File.ReadAllText(saveFilePath);
             Data = JsonUtility.FromJson<GameData>(json);
-            Debug.Log("Load Save Game thành công.");
+            Debug.Log($"Load Save Game thành công. JSON read: {json}. lastSceneName parsed: '{Data.lastSceneName}'");
         }
         else
         {
@@ -46,7 +46,10 @@ public class SaveManager : Singleton<SaveManager>
     // Trả về true nếu tồn tại save file và có scene hợp lệ
     public bool HasSave()
     {
-        return File.Exists(saveFilePath) && !string.IsNullOrEmpty(Data.lastSceneName) && Data.lastSceneName != "MainMenu";
+        bool fileExists = File.Exists(saveFilePath);
+        bool hasScene = !string.IsNullOrEmpty(Data.lastSceneName);
+        Debug.Log($"[HasSave] fileExists: {fileExists}, hasScene: {hasScene} (val: '{Data.lastSceneName}')");
+        return fileExists && hasScene;
     }
 
     // Reset toàn bộ dữ liệu (dùng khi New Game)
