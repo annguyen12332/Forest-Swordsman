@@ -29,15 +29,16 @@ public class InventorySlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
             slotImage.color = highlightColor;
 
         InventorySlot slot = GetComponentInChildren<InventorySlot>();
+
+        // Chỉ hiện popup Use khi slot chứa HeartItem (Gem KHÔNG có nút Use)
         if (slot != null && slot.GetHeartItemInfo() != null && slot.GetCount() > 0)
         {
-            // Slot có tim → hiện popup Use
             if (UseItemPopup.Instance != null)
                 UseItemPopup.Instance.Show(transform.position, GetComponent<RectTransform>());
         }
         else
         {
-            // Slot không có item → ẩn popup
+            // Slot trống hoặc chứa Gem / Weapon → ẩn popup
             if (UseItemPopup.Instance != null)
                 UseItemPopup.Instance.Hide();
         }
@@ -54,9 +55,30 @@ public class InventorySlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        // Click slot không có item → ẩn popup
-        if (UseItemPopup.Instance != null)
-            UseItemPopup.Instance.Hide();
+        InventorySlot slot = GetComponentInChildren<InventorySlot>();
+        Debug.Log("[InventorySlotUI] Clicked on slot! slot is null: " + (slot == null));
+        if (slot == null) return;
+
+        // Click vào slot có Heart Item → dùng ngay (không cần popup)
+        if (slot.GetHeartItemInfo() != null && slot.GetCount() > 0)
+        {
+            if (InventoryManager.Instance != null)
+                InventoryManager.Instance.UseHeartFromSlot(slot);
+        }
+        // Click vào slot Gem Item → Nếu Lò rèn đang mở, đẩy sang lò rèn
+        else if (slot.GetGemItemInfo() != null && slot.GetCount() > 0)
+        {
+             Debug.Log("[InventorySlotUI] Clicked on Gem. WeaponUpgradeOpen: " + (WeaponUpgradeManager.Instance != null && WeaponUpgradeManager.Instance.IsOpen));
+             if (WeaponUpgradeManager.Instance != null && WeaponUpgradeManager.Instance.IsOpen)
+             {
+                 WeaponUpgradeManager.Instance.PlaceGem(slot.GetGemItemInfo());
+             }
+        }
+        else
+        {
+            if (UseItemPopup.Instance != null)
+                UseItemPopup.Instance.Hide();
+        }
     }
 }
 

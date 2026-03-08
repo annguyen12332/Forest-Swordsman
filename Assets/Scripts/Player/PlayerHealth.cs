@@ -96,10 +96,18 @@ public class PlayerHealth : Singleton<PlayerHealth>
 
     private void UpdateHealthSlider()
     {
+        // Nếu healthSlider bị mất (destroyed) hoặc chưa có, tìm lại
         if (healthSlider == null)
         {
-            healthSlider = GameObject.Find(HEALTH_SLIDER_TEXT).GetComponent<Slider>();
+            GameObject sliderGO = GameObject.Find(HEALTH_SLIDER_TEXT);
+            if (sliderGO != null)
+            {
+                healthSlider = sliderGO.GetComponent<Slider>();
+            }
         }
+
+        // Nếu vẫn null sau khi tìm (vd: Scene Town không có slider), thoát
+        if (healthSlider == null) return;
 
         healthSlider.maxValue = maxHealth;
         healthSlider.value = currentHealth;

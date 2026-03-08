@@ -8,16 +8,19 @@ public class InventorySlot : MonoBehaviour
 {
     [SerializeField] private WeaponInfo weaponInfo;
     [SerializeField] private HeartItemInfo heartItemInfo;
+    [SerializeField] private GemItemInfo gemItemInfo;
     [SerializeField] private int itemCount = 0;
     [SerializeField] private TMP_Text countText;
     [SerializeField] private Image itemIcon;
 
     private void Awake()
     {
-        // Tự tạo Item Icon nếu chưa có
+        // Tự tìm Item Icon nếu chưa có
         if (itemIcon == null)
         {
             Transform existing = transform.Find("Item Icon");
+            if (existing == null) existing = transform.Find("Equipped Item"); // Hỗ trợ tên cũ
+
             if (existing != null)
             {
                 itemIcon = existing.GetComponent<Image>();
@@ -103,6 +106,19 @@ public class InventorySlot : MonoBehaviour
     {
         heartItemInfo = info;
         weaponInfo = null;
+        gemItemInfo = null;
+        itemCount = amount;
+        UpdateSlotUI();
+    }
+
+    // ─── Gem Item ─────────────────────────────────────────
+    public GemItemInfo GetGemItemInfo() => gemItemInfo;
+
+    public void SetGemItem(GemItemInfo info, int amount = 1)
+    {
+        gemItemInfo = info;
+        weaponInfo = null;
+        heartItemInfo = null;
         itemCount = amount;
         UpdateSlotUI();
     }
@@ -124,6 +140,7 @@ public class InventorySlot : MonoBehaviour
             {
                 weaponInfo = null;
                 heartItemInfo = null;
+                gemItemInfo = null;
             }
             UpdateSlotUI();
         }
@@ -131,7 +148,7 @@ public class InventorySlot : MonoBehaviour
 
     public int GetCount() => itemCount;
 
-    public bool IsEmpty() => weaponInfo == null && heartItemInfo == null;
+    public bool IsEmpty() => weaponInfo == null && heartItemInfo == null && gemItemInfo == null;
 
     private void UpdateSlotUI()
     {
@@ -141,8 +158,9 @@ public class InventorySlot : MonoBehaviour
         if (itemIcon != null)
         {
             Sprite icon = null;
-            if (weaponInfo != null)         icon = weaponInfo.weaponIcon;
+            if (weaponInfo != null)          icon = weaponInfo.weaponIcon;
             else if (heartItemInfo != null)  icon = heartItemInfo.itemIcon;
+            else if (gemItemInfo != null)    icon = gemItemInfo.itemIcon;
 
             if (icon != null)
             {

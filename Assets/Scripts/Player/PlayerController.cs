@@ -36,6 +36,7 @@ public class PlayerController : Singleton<PlayerController>
     private void Start()
     {
         playerControls.Combat.Dash.performed += _ => Dash();
+        playerControls.Combat.Heal.performed += _ => Heal();
 
         startingMoveSpeed = moveSpeed;
 
@@ -55,12 +56,20 @@ public class PlayerController : Singleton<PlayerController>
     private void Update()
     {
         PlayerInput();
+    }
 
-        // Phím Z: dùng tim hồi máu (chỉ khi hành trang đóng)
-        if (Input.GetKeyDown(KeyCode.Z) && !InventoryManager.IsInventoryOpen)
+    private void Heal()
+    {
+        bool used = false;
+        
+        if (ActiveInventory.Instance != null)
         {
-            if (InventoryManager.Instance != null)
-                InventoryManager.Instance.UseHeartItem();
+            used = ActiveInventory.Instance.UseHeartItem();
+        }
+        
+        if (!used && InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.UseHeartItem();
         }
     }
 
