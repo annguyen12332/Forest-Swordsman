@@ -64,15 +64,25 @@ public class MainMenuController : MonoBehaviour
     // Tiếp tục từ lần chơi trước: load scene đã lưu
     public void Continue()
     {
-        if (SaveManager.Instance != null && SaveManager.Instance.HasSave())
+        if (SaveManager.Instance != null)
         {
-            string sceneToLoad = SaveManager.Instance.Data.lastSceneName;
-            // Phục hồi cho các file save cũ bị lỗi ghi đè tên scene là MainMenu
-            if (sceneToLoad == "MainMenu" || string.IsNullOrEmpty(sceneToLoad))
+            // Bắt buộc Load lại từ ổ cứng để lấy data mới nhất (nếu người chơi sửa JSON bằng tay trong lúc màn hình Menu đang mở)
+            SaveManager.Instance.LoadGame();
+
+            if (SaveManager.Instance.HasSave())
             {
-                sceneToLoad = newGameScene;
+                string sceneToLoad = SaveManager.Instance.Data.lastSceneName;
+                // Phục hồi cho các file save cũ bị lỗi ghi đè tên scene là MainMenu
+                if (sceneToLoad == "MainMenu" || string.IsNullOrEmpty(sceneToLoad))
+                {
+                    sceneToLoad = newGameScene;
+                }
+                SceneManager.LoadScene(sceneToLoad);
             }
-            SceneManager.LoadScene(sceneToLoad);
+            else
+            {
+                ShowNoSave();
+            }
         }
         else
         {
