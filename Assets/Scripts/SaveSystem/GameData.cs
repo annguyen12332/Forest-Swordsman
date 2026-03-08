@@ -12,6 +12,10 @@ public class GameData
     // Lưu lượng tim (Hearts) trong hành trang
     public int heartCount = 0;
 
+    // Lưu lượng kinh nghiệm và cấp độ
+    public int playerLevel = 1;
+    public int playerXP = 0;
+
     // Lưu dữ liệu cấp độ của các loại vũ khí theo tên file ScriptableObject
     public List<WeaponSaveData> weaponsData = new List<WeaponSaveData>();
 
