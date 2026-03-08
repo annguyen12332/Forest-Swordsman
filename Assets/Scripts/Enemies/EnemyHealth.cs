@@ -5,9 +5,6 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour
 {
     [SerializeField] private int startingHealth = 3;
-    [SerializeField] private int xpReward = 50; // Lượng XP rớt ra
-    [SerializeField] private int healthScalingFactor = 2; // Tăng bao nhiêu máu mỗi cấp độ người chơi
-
     [SerializeField] private GameObject deathVFXPrefab;
     [SerializeField] private float knockbackThrust = 15f;
 
@@ -25,12 +22,8 @@ public class EnemyHealth : MonoBehaviour
 
     private void Start()
     {
-        // Tính máu dựa trên cấp độ người chơi
-        int playerLevel = (PlayerLevel.Instance != null) ? PlayerLevel.Instance.CurrentLevel : 1;
-        int scaledHealth = startingHealth + (playerLevel - 1) * healthScalingFactor;
-
-        currentHealth = scaledHealth;
-        enemyHealthBar?.SetMaxHealth(scaledHealth);
+        currentHealth = startingHealth;
+        enemyHealthBar?.SetMaxHealth(startingHealth);
     }
 
     public void TakeDamage(int damage)
@@ -54,12 +47,6 @@ public class EnemyHealth : MonoBehaviour
         {
             Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
             GetComponent<PickupSpawner>().DropItems();
-
-            if (PlayerLevel.Instance != null)
-            {
-                PlayerLevel.Instance.AddXP(xpReward);
-            }
-
             Destroy(gameObject);
         }
     }
