@@ -11,9 +11,8 @@ public class ActiveInventory : Singleton<ActiveInventory>
 
     protected override void Awake()
     {
+        playerControls = new PlayerControls(); // khởi tạo trước base.Awake()
         base.Awake();
-
-        playerControls = new PlayerControls();
     }
 
     private void Start()
@@ -23,7 +22,18 @@ public class ActiveInventory : Singleton<ActiveInventory>
 
     private void OnEnable()
     {
-        playerControls.Enable();
+        playerControls?.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerControls?.Disable();
+    }
+
+    private void OnDestroy()
+    {
+        playerControls?.Dispose();
+        playerControls = null;
     }
 
     public void EquipStartingWeapon()
