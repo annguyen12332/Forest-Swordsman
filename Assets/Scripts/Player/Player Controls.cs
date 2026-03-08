@@ -181,6 +181,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Heal"",
+                    ""type"": ""Button"",
+                    ""id"": ""31f21281-8ed4-4b37-a570-8afc07a910e5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -203,6 +212,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""83e7df4b-68a6-4354-8701-2c35fd2c0e63"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Heal"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -290,6 +310,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Combat = asset.FindActionMap("Combat", throwIfNotFound: true);
         m_Combat_Attack = m_Combat.FindAction("Attack", throwIfNotFound: true);
         m_Combat_Dash = m_Combat.FindAction("Dash", throwIfNotFound: true);
+        m_Combat_Heal = m_Combat.FindAction("Heal", throwIfNotFound: true);
         // Inventory
         m_Inventory = asset.FindActionMap("Inventory", throwIfNotFound: true);
         m_Inventory_Keyboard = m_Inventory.FindAction("Keyboard", throwIfNotFound: true);
@@ -473,6 +494,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private List<ICombatActions> m_CombatActionsCallbackInterfaces = new List<ICombatActions>();
     private readonly InputAction m_Combat_Attack;
     private readonly InputAction m_Combat_Dash;
+    private readonly InputAction m_Combat_Heal;
     /// <summary>
     /// Provides access to input actions defined in input action map "Combat".
     /// </summary>
@@ -492,6 +514,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Combat/Dash".
         /// </summary>
         public InputAction @Dash => m_Wrapper.m_Combat_Dash;
+        /// <summary>
+        /// Provides access to the underlying input action "Combat/Heal".
+        /// </summary>
+        public InputAction @Heal => m_Wrapper.m_Combat_Heal;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -524,6 +550,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Dash.started += instance.OnDash;
             @Dash.performed += instance.OnDash;
             @Dash.canceled += instance.OnDash;
+            @Heal.started += instance.OnHeal;
+            @Heal.performed += instance.OnHeal;
+            @Heal.canceled += instance.OnHeal;
         }
 
         /// <summary>
@@ -541,6 +570,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Dash.started -= instance.OnDash;
             @Dash.performed -= instance.OnDash;
             @Dash.canceled -= instance.OnDash;
+            @Heal.started -= instance.OnHeal;
+            @Heal.performed -= instance.OnHeal;
+            @Heal.canceled -= instance.OnHeal;
         }
 
         /// <summary>
@@ -706,6 +738,13 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDash(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Heal" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHeal(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Inventory" which allows adding and removing callbacks.

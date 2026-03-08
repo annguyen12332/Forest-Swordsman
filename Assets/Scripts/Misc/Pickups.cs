@@ -9,12 +9,14 @@ public class Pickups : MonoBehaviour
         GoldCoin,
         StaminaGlobe,
         HealthGlobe,
-        Boom
+        Boom,
+        Gem
     }
 
     [SerializeField] private PickupType pickupType;
     [SerializeField] private WeaponInfo boomWeaponInfo;
     [SerializeField] private HeartItemInfo heartItemInfo;
+    [SerializeField] private GemItemInfo gemItemInfo;
     [SerializeField] private float pickupDistance = 5f;
     [SerializeField] private float accelerationRate = .2f;
     [SerializeField] private float moveSpeed = 3f;
@@ -114,6 +116,12 @@ public class Pickups : MonoBehaviour
             case PickupType.Boom:
                 if (ActiveInventory.Instance != null)
                     ActiveInventory.Instance.AddItem(boomWeaponInfo);
+                break;
+            case PickupType.Gem:
+                if (InventoryManager.Instance != null && gemItemInfo != null)
+                    InventoryManager.Instance.AddGemItem(gemItemInfo);
+                else if (gemItemInfo == null)
+                    Debug.LogWarning("Pickups: gemItemInfo chưa gán trong Inspector!");
                 break;
             default:
                 break;

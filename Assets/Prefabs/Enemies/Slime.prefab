@@ -303,7 +303,9 @@ MonoBehaviour:
   healthGlobe: {fileID: 457197627469000536, guid: 06433957cf297794d9303167f01a4797, type: 3}
   staminaGlobe: {fileID: 457197627469000536, guid: 6bd42e5fefabee445bbb978e2a7f7a81, type: 3}
   boomPickup: {fileID: 3162405758184162267, guid: 1f56a1c134936244e9546bf79fc6931c, type: 3}
+  gemPickup: {fileID: 6194238610313371100, guid: d21c024d1b85621499e3b1dff8bb4044, type: 3}
   boomDropChance: 100
+  gemDropChance: 30
 --- !u!1 &2538983666939130516
 GameObject:
   m_ObjectHideFlags: 0

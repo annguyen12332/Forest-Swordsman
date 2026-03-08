@@ -8,15 +8,24 @@ public class InventoryManager : Singleton<InventoryManager>
     [SerializeField] private Button closeButton;
     [SerializeField] private Transform inventoryGrid; // kéo InventoryGrid vào đây
 
-    public static bool IsInventoryOpen { get; private set; } = false;
+    // Luôn lấy thẳng từ Panel — không bao giờ bị lệch với thực tế
+    public static bool IsInventoryOpen => Instance != null && Instance.inventoryPanel != null && Instance.inventoryPanel.activeSelf;
     public bool IsOpen => IsInventoryOpen;
+
+    private RectTransform panelRect;
+    private Vector2 originalPosition;
 
     protected override void Awake()
     {
         base.Awake();
-        IsInventoryOpen = false;
         if (inventoryPanel != null)
+        {
+            panelRect = inventoryPanel.GetComponent<RectTransform>();
+            if (panelRect != null)
+                originalPosition = panelRect.anchoredPosition;
+
             inventoryPanel.SetActive(false);
+        }
 
         // Tự tìm InventoryGrid nếu chưa gán
         if (inventoryGrid == null && inventoryPanel != null)
@@ -66,26 +75,68 @@ public class InventoryManager : Singleton<InventoryManager>
             Debug.LogError("InventoryManager: inventoryPanel chưa gán trong Inspector!");
             return;
         }
-        IsInventoryOpen = !IsInventoryOpen;
-        inventoryPanel.SetActive(IsInventoryOpen);
+        bool nowOpen = !inventoryPanel.activeSelf;
+        inventoryPanel.SetActive(nowOpen);
 
-        if (IsInventoryOpen && EconomyManager.Instance != null)
-            EconomyManager.Instance.RefreshGoldUI();
+        if (nowOpen)
+        {
+            // Tự động lùi sang trái nếu Lò Rèn đang mở
+            if (WeaponUpgradeManager.Instance != null && WeaponUpgradeManager.Instance.IsOpen)
+                MoveToSide();
+            else
+                MoveToCenter();
+
+            if (EconomyManager.Instance != null)
+                EconomyManager.Instance.RefreshGoldUI();
+        }
+    }
+
+    public void MoveToSide()
+    {
+        if (panelRect != null)
+        {
+            // Dịch sang trái 500 pixels (tăng khoảng cách xa hơn)
+            panelRect.anchoredPosition = originalPosition + new Vector2(-500f, 0);
+        }
+    }
+
+    public void MoveToCenter()
+    {
+        if (panelRect != null)
+        {
+            panelRect.anchoredPosition = originalPosition;
+        }
     }
 
     public void CloseInventory()
     {
         if (inventoryPanel == null) return;
-        IsInventoryOpen = false;
         inventoryPanel.SetActive(false);
+
+        // Bỏ focus UI để nút A/D không bị kẹt vào Slider/Button
+        if (UnityEngine.EventSystems.EventSystem.current != null)
+        {
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     // ─── Heart Item management (dùng InventoryGrid slots) ────────────────────
 
     public void AddHeartItem(HeartItemInfo heartItemInfo, int amount = 1)
     {
+        if (inventoryGrid == null) 
+        { 
+             // Thử tìm lại grid nếu bị lạc reference
+            if (inventoryPanel != null)
+            {
+                Transform grid = inventoryPanel.transform.Find("InventoryGrid");
+                if (grid != null) inventoryGrid = grid;
+            }
+        }
+        
         if (inventoryGrid == null) { Debug.LogWarning("InventoryManager: inventoryGrid chưa gán!"); return; }
 
+        Debug.Log($"[InventoryManager] Thêm {amount} tim vào hành trang.");
         // Stack vào slot đã có tim cùng loại
         foreach (Transform child in inventoryGrid)
         {
@@ -114,23 +165,115 @@ public class InventoryManager : Singleton<InventoryManager>
         Debug.LogWarning("InventoryManager: Không còn slot trống trong hành trang!");
     }
 
-    public void UseHeartItem()
+    public bool UseHeartItem()
     {
-        if (inventoryGrid == null) return;
+        if (inventoryGrid == null) return false;
 
+        foreach (Transform child in inventoryGrid)
+        {
+            InventorySlot slot = child.GetComponent<InventorySlot>();
+            if (slot == null) slot = child.GetComponentInChildren<InventorySlot>();
+            
+            if (slot != null && slot.GetHeartItemInfo() != null && slot.GetCount() > 0)
+            {
+                UseHeartFromSlot(slot);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void UseHeartFromSlot(InventorySlot slot)
+    {
+        if (slot == null) return;
+        if (slot.GetHeartItemInfo() != null && slot.GetCount() > 0)
+        {
+            slot.UseItem();
+            if (HeartHUD.Instance != null) HeartHUD.Instance.UseHeart();
+            if (PlayerHealth.Instance != null) PlayerHealth.Instance.HealPlayer();
+        }
+    }
+
+    // ─── Gem Item management ──────────────────────────────────────────────────
+
+    public void AddGemItem(GemItemInfo gemItemInfo, int amount = 1)
+    {
+        if (inventoryGrid == null) { Debug.LogWarning("InventoryManager: inventoryGrid chưa gán!"); return; }
+
+        // Stack vào slot đã có gem cùng loại
         foreach (Transform child in inventoryGrid)
         {
             InventorySlot slot = child.GetComponentInChildren<InventorySlot>();
             if (slot == null) continue;
-            if (slot.GetHeartItemInfo() != null && slot.GetCount() > 0)
+            if (slot.GetGemItemInfo() == gemItemInfo)
             {
-                slot.UseItem();
-                if (HeartHUD.Instance != null) HeartHUD.Instance.UseHeart();
-                if (PlayerHealth.Instance != null) PlayerHealth.Instance.HealPlayer();
+                slot.AddToCount(amount);
                 return;
             }
         }
-        Debug.Log("[InventoryManager] Không có tim trong hành trang.");
+
+        // Tìm slot rỗng
+        foreach (Transform child in inventoryGrid)
+        {
+            InventorySlot slot = child.GetComponentInChildren<InventorySlot>();
+            if (slot == null) continue;
+            if (slot.IsEmpty())
+            {
+                slot.SetGemItem(gemItemInfo, amount);
+                return;
+            }
+        }
+        Debug.LogWarning("InventoryManager: Không còn slot trống trong hành trang!");
+    }
+
+    public int GetGemCount()
+    {
+        int totalGem = 0;
+        if (inventoryGrid == null) return 0;
+
+        foreach (Transform child in inventoryGrid)
+        {
+            InventorySlot slot = child.GetComponentInChildren<InventorySlot>();
+            if (slot != null && slot.GetGemItemInfo() != null)
+            {
+                totalGem += slot.GetCount();
+            }
+        }
+        return totalGem;
+    }
+
+    public void RemoveGems(int amount)
+    {
+        if (inventoryGrid == null) return;
+        
+        int remainingToRemove = amount;
+
+        foreach (Transform child in inventoryGrid)
+        {
+            InventorySlot slot = child.GetComponentInChildren<InventorySlot>();
+            if (slot == null || slot.GetGemItemInfo() == null) continue;
+
+            int countInSlot = slot.GetCount();
+            if (countInSlot > 0)
+            {
+                if (countInSlot >= remainingToRemove)
+                {
+                    // Slot này đủ để trừ
+                    for(int i = 0; i < remainingToRemove; i++) 
+                         slot.UseItem(); // Trừ dần trong slot
+                         
+                    return; // Đã xong
+                }
+                else
+                {
+                    // Slot này không đủ, trừ hết slot này r quay tiếp slot sau
+                    for (int i = 0; i < countInSlot; i++)
+                         slot.UseItem();
+                         
+                    remainingToRemove -= countInSlot;
+                }
+            }
+        }
     }
 }
 

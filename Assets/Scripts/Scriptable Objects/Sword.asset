@@ -16,3 +16,4 @@ MonoBehaviour:
   weaponCooldown: 0.3
   weaponDamage: 1
   weaponRange: 0
+  weaponIcon: {fileID: 21300000, guid: 9df6b4ee2ce510542a7378c6fa064353, type: 3}
