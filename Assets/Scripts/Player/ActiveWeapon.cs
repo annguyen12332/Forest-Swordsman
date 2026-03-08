@@ -38,6 +38,18 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
     public void NewWeapon(MonoBehaviour newWeapon)
     {
         CurrentActiveWeapon = newWeapon;
+
+        // LOAD LEVEL VŨ KHÍ TỪ JSON KHI TRANG BỊ
+        if (SaveManager.Instance != null && newWeapon is IWeapon weaponInterface)
+        {
+             string wName = weaponInterface.GetWeaponInfo().name;
+             var wData = SaveManager.Instance.Data.weaponsData.Find(w => w.weaponName == wName);
+             if (wData != null)
+             {
+                 weaponInterface.GetWeaponInfo().weaponUpgradeLevel = wData.upgradeLevel;
+             }
+        }
+
         AttackCooldown();
         timeBetweenAttacks = (CurrentActiveWeapon as IWeapon).GetWeaponInfo().weaponCooldown;
     }

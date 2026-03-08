@@ -621,6 +621,7 @@ RectTransform:
   - {fileID: 9138750456129963623}
   - {fileID: 2581674260527823412}
   - {fileID: 4470059043894825374}
+  - {fileID: 674147766856309409}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1199,6 +1200,59 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &1579881385569971493
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 674147766856309409}
+  - component: {fileID: 785298734752725557}
+  m_Layer: 5
+  m_Name: ' SaveManager'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &674147766856309409
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1579881385569971493}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8103920940671807892}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &785298734752725557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1579881385569971493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e75c9d3a04f70d840aee60edab90f8fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveManager
+  Data:
+    currentGold: 0
+    gemCount: 0
+    heartCount: 0
+    weaponsData: []
 --- !u!1 &1666181377148951796
 GameObject:
   m_ObjectHideFlags: 0
@@ -1790,6 +1844,8 @@ MonoBehaviour:
   inventoryPanel: {fileID: 7727020344162738308}
   closeButton: {fileID: 5669178267221602891}
   inventoryGrid: {fileID: 0}
+  saveGemRef: {fileID: 11400000, guid: 14c34266d2110ab4f8d43f192285a62e, type: 2}
+  saveHeartRef: {fileID: 11400000, guid: 7faa9d828b03da5469a65a5d5ba1a9c4, type: 2}
 --- !u!1 &2405339806988109072
 GameObject:
   m_ObjectHideFlags: 0

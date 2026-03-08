@@ -301,6 +301,19 @@ public class WeaponUpgradeManager : Singleton<WeaponUpgradeManager>
             {
                 // THÀNH CÔNG
                 currentWeapon.GetWeaponInfo().weaponUpgradeLevel++;
+
+                // LƯU CẤP ĐỘ VŨ KHÍ JSON
+                if (SaveManager.Instance != null)
+                {
+                    string wName = currentWeapon.GetWeaponInfo().name;
+                    WeaponSaveData wData = SaveManager.Instance.Data.weaponsData.Find(w => w.weaponName == wName);
+                    
+                    if (wData != null) wData.upgradeLevel = currentWeapon.GetWeaponInfo().weaponUpgradeLevel;
+                    else SaveManager.Instance.Data.weaponsData.Add(new WeaponSaveData { weaponName = wName, upgradeLevel = currentWeapon.GetWeaponInfo().weaponUpgradeLevel });
+                    
+                    SaveManager.Instance.SaveGame();
+                }
+
                 statusText.text = $"<color=green>Upgrade Successful to Level {currentWeapon.GetWeaponInfo().weaponUpgradeLevel}!</color>";
                 Debug.Log("[WeaponUpgrade] UPGRADE SUCCESS");
             }

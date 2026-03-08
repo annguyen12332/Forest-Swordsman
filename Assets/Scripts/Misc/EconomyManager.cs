@@ -39,6 +39,12 @@ public class EconomyManager : Singleton<EconomyManager>
             }
         }
 
+        // Khôi phục lượng vàng từ Save Data
+        if (SaveManager.Instance != null)
+        {
+            currentGold = SaveManager.Instance.Data.currentGold;
+        }
+
         RefreshGoldUI();
     }
 
@@ -47,6 +53,13 @@ public class EconomyManager : Singleton<EconomyManager>
         currentGold += amount;
         Debug.Log($"[EconomyManager] Nhặt xu! currentGold = {currentGold}");
         RefreshGoldUI();
+
+        // Lưu vàng
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.Data.currentGold = currentGold;
+            SaveManager.Instance.SaveGame();
+        }
     }
 
     public void RefreshGoldUI()
