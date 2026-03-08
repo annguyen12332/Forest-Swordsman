@@ -63,6 +63,15 @@ public class Stamina : Singleton<Stamina>
 
     private void UpdateStaminaImages()
     {
+        if (staminaContainer == null)
+        {
+            GameObject containerGO = GameObject.Find(STAMINA_CONTAINER_TEXT);
+            if (containerGO != null)
+                staminaContainer = containerGO.transform;
+            else
+                return; // Container chưa sẵn sàng
+        }
+
         for (int i = 0; i < maxStamina; i++)
         {
             Transform child = staminaContainer.GetChild(i);
