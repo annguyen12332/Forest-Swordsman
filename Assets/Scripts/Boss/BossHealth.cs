@@ -51,10 +51,7 @@ public class BossHealth : MonoBehaviour
         currentHealth = startingHealth;
         // includeInactive: true — panel starts SetActive(false) so normal Find won't see it
         bossUI = FindObjectOfType<BossHealthBarUI>(true);
-        bossUI?.InitBoss(gameObject.name.Replace("(Clone)", "").Trim(), startingHealth);
-
-        // Wire phase changes → health bar label
-        OnPhaseChanged += phase => bossUI?.UpdatePhaseText(phase);
+        bossUI?.RegisterBoss(GetInstanceID(), startingHealth);
     }
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -64,7 +61,7 @@ public class BossHealth : MonoBehaviour
         if (IsDead || isInvincible || damage <= 0) return;
 
         currentHealth = Mathf.Max(currentHealth - damage, 0);
-        bossUI?.UpdateHealth(currentHealth);
+        bossUI?.UpdateBossHealth(GetInstanceID(), currentHealth);
 
         knockback?.GetKnockedBack(PlayerController.Instance.transform, knockbackThrust);
         if (flash != null) StartCoroutine(flash.FlashRoutine());
@@ -106,7 +103,7 @@ public class BossHealth : MonoBehaviour
             Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
 
         GetComponent<PickupSpawner>()?.DropItems();
-        bossUI?.Hide();
+        bossUI?.UnregisterBoss(GetInstanceID());
         OnBossDied?.Invoke();
         Destroy(gameObject);
     }
