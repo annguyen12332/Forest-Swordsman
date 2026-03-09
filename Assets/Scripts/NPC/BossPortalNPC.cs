@@ -1,73 +1,72 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// NPC placed in the Town scene that acts as a portal to the Boss scene.
-/// When the player enters the trigger zone, a dialogue message is displayed.
-/// Pressing F triggers a fade-to-black transition and loads the boss scene.
+/// NPC in the Town scene that shows dialogue "Help me save my world"
+/// and teleports the player to Scene_Boss when they press F.
 ///
-/// SETUP in Inspector:
-///  - bossSceneName : exact name of your Boss scene (e.g. "BossScene")
-///  - dialogueText  : a TextMeshProUGUI component (world-space or screen-space canvas)
-///                    that sits above the NPC. Start it disabled; this script enables it.
+/// Setup:
+///  1. Create a GameObject in Town scene, add this script.
+///  2. Add a CircleCollider2D (IsTrigger = true) for interaction range.
+///  3. Assign interactHintObject  → a child object with a "Press [F]" label.
+///  4. Assign dialogueObject      → a child object with "Help me save my world" text.
+///  5. Set bossSceneName to "Scene_Boss" (default already set).
 /// </summary>
 public class BossPortalNPC : MonoBehaviour
 {
-    [Header("Scene")]
-    [SerializeField] private string bossSceneName = "BossScene";
+    [Header("Scene to Load")]
+    [SerializeField] private string bossSceneName = "Scene_Boss";
 
-    [Header("Dialogue")]
-    [SerializeField] private TextMeshProUGUI dialogueText;
-    [SerializeField] private string hintLine = "Help me save my world";
-    [SerializeField] private string interactLine = "[F] Enter the Boss Realm";
+    [Header("UI Objects (child GameObjects)")]
+    [Tooltip("Object that shows 'Press [F]' hint when player is nearby")]
+    [SerializeField] private GameObject interactHintObject;
+    [Tooltip("Object that shows NPC dialogue text")]
+    [SerializeField] private GameObject dialogueObject;
 
-    private bool isPlayerInRange = false;
-    private bool isTransitioning  = false;
+    [Header("Timing")]
+    [SerializeField] private float sceneLoadDelay = 1f;
+
+    private bool isPlayerInRange;
+    private bool isLoading;
 
     private void Start()
     {
-        if (dialogueText != null)
-            dialogueText.gameObject.SetActive(false);
+        if (interactHintObject != null) interactHintObject.SetActive(false);
+        if (dialogueObject     != null) dialogueObject.SetActive(false);
     }
 
     private void Update()
     {
-        if (isPlayerInRange && !isTransitioning && Input.GetKeyDown(KeyCode.F))
-        {
-            isTransitioning = true;
-            UIFade.Instance?.FadeToBlack();
+        if (isPlayerInRange && !isLoading && Input.GetKeyDown(KeyCode.F))
             StartCoroutine(LoadBossSceneRoutine());
-        }
     }
 
     private IEnumerator LoadBossSceneRoutine()
     {
-        yield return new WaitForSeconds(1f);
+        isLoading = true;
+
+        if (dialogueObject     != null) dialogueObject.SetActive(true);
+        if (interactHintObject != null) interactHintObject.SetActive(false);
+
+        UIFade.Instance?.FadeToBlack();
+        yield return new WaitForSeconds(sceneLoadDelay);
         SceneManager.LoadScene(bossSceneName);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            isPlayerInRange = true;
-            if (dialogueText != null)
-            {
-                dialogueText.gameObject.SetActive(true);
-                dialogueText.text = $"{hintLine}\n{interactLine}";
-            }
-        }
+        if (!other.CompareTag("Player")) return;
+        isPlayerInRange = true;
+        if (interactHintObject != null) interactHintObject.SetActive(true);
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            isPlayerInRange = false;
-            if (dialogueText != null)
-                dialogueText.gameObject.SetActive(false);
-        }
+        if (!other.CompareTag("Player")) return;
+        isPlayerInRange = false;
+        if (interactHintObject != null) interactHintObject.SetActive(false);
+        if (dialogueObject     != null) dialogueObject.SetActive(false);
+        isLoading = false;
     }
 }
