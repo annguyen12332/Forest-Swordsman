@@ -42,4 +42,10 @@ public class EnemyPathfinding : MonoBehaviour
         moveDir = Vector3.zero;
     }
 
+    /// <summary>Allows boss AI scripts to override move speed at runtime.</summary>
+    public void SetMoveSpeed(float speed)
+    {
+        moveSpeed = speed;
+    }
+
 }

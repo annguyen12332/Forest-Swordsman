@@ -45,6 +45,13 @@ public class DamageSource : MonoBehaviour
         if (enemyHealth != null)
         {
             enemyHealth.TakeDamage(damageAmount);
+            return;
+        }
+
+        BossHealth bossHealth = other.gameObject.GetComponent<BossHealth>();
+        if (bossHealth != null)
+        {
+            bossHealth.TakeDamage(damageAmount);
         }
     }
 }

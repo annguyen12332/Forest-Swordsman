@@ -26,5 +26,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Town.unity
     guid: 7bc3864fc45a29e46b950cc8b29c893c
+  - enabled: 1
+    path: Assets/Scenes/Scene_Boss.unity
+    guid: 127dc3fc476447d46aa2b6f8bd0cc6d7
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
