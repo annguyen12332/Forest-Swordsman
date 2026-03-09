@@ -21,7 +21,10 @@ public class MainMenuController : MonoBehaviour
     {
         // Nếu đang có màn hình UIFade đen (ví dụ: vừa rời gameplay),
         // fade về trong suốt để main menu hiện thị đúng cách.
-        UIFade.Instance?.FadeToClear();
+        if (UIFade.Instance != null && UIFade.Instance.isActiveAndEnabled)
+        {
+            UIFade.Instance.FadeToClear();
+        }
 
         // Phương án X: đảm bảo system cursor luôn hiện ở Main Menu
         // (tránh bị kẹt ẩn khi chuyển từ gameplay/pause sang menu).
@@ -61,9 +64,25 @@ public class MainMenuController : MonoBehaviour
     // Tiếp tục từ lần chơi trước: load scene đã lưu
     public void Continue()
     {
-        if (SaveManager.Instance != null && SaveManager.Instance.HasSave())
+        if (SaveManager.Instance != null)
         {
-            SceneManager.LoadScene(SaveManager.Instance.Data.lastSceneName);
+            // Bắt buộc Load lại từ ổ cứng để lấy data mới nhất (nếu người chơi sửa JSON bằng tay trong lúc màn hình Menu đang mở)
+            SaveManager.Instance.LoadGame();
+
+            if (SaveManager.Instance.HasSave())
+            {
+                string sceneToLoad = SaveManager.Instance.Data.lastSceneName;
+                // Phục hồi cho các file save cũ bị lỗi ghi đè tên scene là MainMenu
+                if (sceneToLoad == "MainMenu" || string.IsNullOrEmpty(sceneToLoad))
+                {
+                    sceneToLoad = newGameScene;
+                }
+                SceneManager.LoadScene(sceneToLoad);
+            }
+            else
+            {
+                ShowNoSave();
+            }
         }
         else
         {

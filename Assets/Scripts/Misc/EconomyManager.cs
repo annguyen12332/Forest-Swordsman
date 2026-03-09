@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EconomyManager : Singleton<EconomyManager>
 {
@@ -15,28 +16,54 @@ public class EconomyManager : Singleton<EconomyManager>
 
     private void Start()
     {
-        // Dùng FindObjectsOfTypeAll để tìm được cả object inactive (trong panel ẩn)
-        if (hudGoldText == null || inventoryGoldText == null)
-        {
-            TMP_Text[] allTexts = Resources.FindObjectsOfTypeAll<TMP_Text>();
-            foreach (var t in allTexts)
-            {
-                if (hudGoldText == null && t.gameObject.name == "Gold Amount Text")
-                    hudGoldText = t;
-                if (inventoryGoldText == null && t.gameObject.name == "Inventory Gold Text")
-                    inventoryGoldText = t;
-                if (hudGoldText != null && inventoryGoldText != null)
-                    break;
-            }
-        }
+        FetchUIReferences();
 
         // Khôi phục lượng vàng từ Save Data
-        if (SaveManager.Instance != null)
+        if (SaveManager.Instance != null && SaveManager.Instance.Data != null)
         {
             currentGold = SaveManager.Instance.Data.currentGold;
         }
 
         RefreshGoldUI();
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        hudGoldText = null;
+        inventoryGoldText = null;
+        FetchUIReferences();
+        RefreshGoldUI();
+    }
+
+    private void FetchUIReferences()
+    {
+        if (hudGoldText == null || inventoryGoldText == null)
+        {
+            TMP_Text[] allTexts = Resources.FindObjectsOfTypeAll<TMP_Text>();
+            foreach (var t in allTexts)
+            {
+                // Bỏ qua các object thuộc Prefab chưa instantiate (chỉ có Editor mới bị lỗi này)
+                if (t.gameObject.scene.name == null || !t.gameObject.scene.IsValid()) continue;
+
+                if (hudGoldText == null && t.gameObject.name == "Gold Amount Text")
+                    hudGoldText = t;
+                if (inventoryGoldText == null && t.gameObject.name == "Inventory Gold Text")
+                    inventoryGoldText = t;
+                
+                if (hudGoldText != null && inventoryGoldText != null)
+                    break;
+            }
+        }
     }
 
     public void UpdateCurrentGold(int amount = 1)

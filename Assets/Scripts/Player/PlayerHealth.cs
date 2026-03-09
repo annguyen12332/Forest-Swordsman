@@ -38,6 +38,22 @@ public class PlayerHealth : Singleton<PlayerHealth>
         UpdateHealthSlider();
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        healthSlider = null;
+        UpdateHealthSlider();
+    }
+
     private void OnCollisionStay2D(Collision2D other)
     {
         EnemyAI enemy = other.gameObject.GetComponent<EnemyAI>();
@@ -51,6 +67,13 @@ public class PlayerHealth : Singleton<PlayerHealth>
     public void HealPlayer()
     {
         currentHealth = Mathf.Min(currentHealth + 1, maxHealth);
+        UpdateHealthSlider();
+    }
+
+    public void IncreaseMaxHealth(int amount)
+    {
+        maxHealth += amount;
+        currentHealth = maxHealth; // Hồi đầy máu khi max máu tăng (Lên cấp)
         UpdateHealthSlider();
     }
 

@@ -6,12 +6,24 @@ using UnityEngine.UI;
 /// Gắn lên GameObject "Heart HUD" trên Canvas.
 /// Hiển thị icon tim và số lượng tim còn lại ngoài màn chơi.
 /// </summary>
-public class HeartHUD : Singleton<HeartHUD>
+public class HeartHUD : MonoBehaviour
 {
+    public static HeartHUD Instance { get; private set; }
+
     [SerializeField] private Image heartIcon;
     [SerializeField] private TMP_Text heartCountText;
 
     private int heartCount = 0;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        Instance = this;
+    }
 
     private void Start()
     {

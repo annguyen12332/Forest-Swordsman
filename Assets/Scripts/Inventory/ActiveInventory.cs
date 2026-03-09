@@ -2,17 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActiveInventory : Singleton<ActiveInventory>
+public class ActiveInventory : MonoBehaviour
 {
+    public static ActiveInventory Instance { get; private set; }
     private int activeSlotIndexNum = 0;
     public int ActiveSlotIndexNum => activeSlotIndexNum;
 
     private PlayerControls playerControls;
 
-    protected override void Awake()
+    private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        Instance = this;
+
         playerControls = new PlayerControls(); // khởi tạo trước base.Awake()
-        base.Awake();
     }
 
     private void Start()

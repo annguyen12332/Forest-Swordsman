@@ -14,8 +14,10 @@ public struct UpgradeLevelData
     public int extraDamage; 
 }
 
-public class WeaponUpgradeManager : Singleton<WeaponUpgradeManager>
+public class WeaponUpgradeManager : MonoBehaviour
 {
+    public static WeaponUpgradeManager Instance { get; private set; }
+
     [Header("UI Reference")]
     [SerializeField] private GameObject upgradePanel;
     [SerializeField] private Image weaponIconImage;
@@ -40,9 +42,14 @@ public class WeaponUpgradeManager : Singleton<WeaponUpgradeManager>
 
     public bool IsOpen => upgradePanel != null && upgradePanel.activeSelf;
 
-    protected override void Awake()
+    protected void Awake()
     {
-        base.Awake();
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        Instance = this;
         
         if (upgradePanel != null)
         {
@@ -78,11 +85,11 @@ public class WeaponUpgradeManager : Singleton<WeaponUpgradeManager>
             new UpgradeLevelData { level = 1, goldCost = 1, gemCost = 1, successRatePercent = 100f, extraDamage = 2 },
             new UpgradeLevelData { level = 2, goldCost = 2, gemCost = 2, successRatePercent = 90f, extraDamage = 4 },
             new UpgradeLevelData { level = 3, goldCost = 3, gemCost = 3, successRatePercent = 80f, extraDamage = 6 },
-            new UpgradeLevelData { level = 4, goldCost = 400, gemCost = 4, successRatePercent = 70f, extraDamage = 9 },
-            new UpgradeLevelData { level = 5, goldCost = 800, gemCost = 5, successRatePercent = 50f, extraDamage = 13 },
-            new UpgradeLevelData { level = 6, goldCost = 1500, gemCost = 6, successRatePercent = 30f, extraDamage = 18 },
-            new UpgradeLevelData { level = 7, goldCost = 2500, gemCost = 8, successRatePercent = 15f, extraDamage = 24 },
-            new UpgradeLevelData { level = 8, goldCost = 4000, gemCost = 10, successRatePercent = 5f, extraDamage = 35 } // Max level
+            new UpgradeLevelData { level = 4, goldCost = 40, gemCost = 4, successRatePercent = 30f, extraDamage = 9 },
+            new UpgradeLevelData { level = 5, goldCost = 800, gemCost = 5, successRatePercent = 20f, extraDamage = 13 },
+            new UpgradeLevelData { level = 6, goldCost = 1500, gemCost = 6, successRatePercent = 10f, extraDamage = 18 },
+            new UpgradeLevelData { level = 7, goldCost = 2500, gemCost = 8, successRatePercent = 5f, extraDamage = 24 },
+            new UpgradeLevelData { level = 8, goldCost = 4000, gemCost = 10, successRatePercent = 2f, extraDamage = 35 } // Max level
         };
     }
 
@@ -325,11 +332,17 @@ public class WeaponUpgradeManager : Singleton<WeaponUpgradeManager>
                 Debug.Log("[WeaponUpgrade] UPGRADE FAILED");
             }
 
+            string savedStatusText = statusText.text; // Giữ lại thông báo
             statusText.gameObject.SetActive(true);
             
             Debug.Log("[WeaponUpgrade] Updating UI...");
-            // Cập nhật lại Text cho lượt bấm sau
+            // Cập nhật lại Text cho lượt bấm sau (hàm này sẽ reset statusText thành rỗng)
             UpdateUI();
+
+            // Hiển thị lại thông báo cũ
+            statusText.text = savedStatusText; 
+            statusText.gameObject.SetActive(true);
+            
             Debug.Log("[WeaponUpgrade] Upgrade transaction complete.");
             
         } catch (System.Exception e) {
