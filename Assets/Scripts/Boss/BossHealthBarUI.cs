@@ -1,10 +1,14 @@
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
 /// Full-screen boss health bar shown at the top of the screen.
+/// Supports multiple simultaneous bosses — displays aggregate (combined) HP.
+/// Only hides when ALL registered bosses have died.
+///
 /// Place this on a Canvas UI GameObject in the boss scene.
 /// Requires: Slider (healthSlider), TextMeshProUGUI (bossNameText, phaseText), CanvasGroup.
 /// </summary>
@@ -16,41 +20,84 @@ public class BossHealthBarUI : MonoBehaviour
     [SerializeField] private CanvasGroup       canvasGroup;
     [SerializeField] private float             fadeDuration = 0.5f;
 
+    // instanceID → (currentHP, maxHP)
+    private readonly Dictionary<int, (int current, int max)> trackedBosses =
+        new Dictionary<int, (int current, int max)>();
+
+    private bool isFading;
+
     private void Awake()
     {
         if (canvasGroup != null) canvasGroup.alpha = 0f;
     }
 
-    /// <summary>Called by BossHealth.Start() when a new boss enters the arena.</summary>
-    public void InitBoss(string bossName, int maxHealth)
+    // ── Public API ────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Called by BossHealth.Start() for each boss that spawns.
+    /// Safe to call from multiple bosses simultaneously.
+    /// </summary>
+    public void RegisterBoss(int instanceID, int maxHP)
     {
-        if (bossNameText != null) bossNameText.text = bossName;
-        if (phaseText != null)    phaseText.text     = "Phase 1";
+        trackedBosses[instanceID] = (maxHP, maxHP);
+        RefreshSlider();
+
+        if (!gameObject.activeSelf)
+        {
+            gameObject.SetActive(true);
+            if (!isFading) StartCoroutine(FadeRoutine(0f, 1f));
+        }
+        RefreshLabels();
+    }
+
+    /// <summary>Called by BossHealth.TakeDamage() every time a boss is hit.</summary>
+    public void UpdateBossHealth(int instanceID, int currentHP)
+    {
+        if (!trackedBosses.ContainsKey(instanceID)) return;
+        var entry = trackedBosses[instanceID];
+        trackedBosses[instanceID] = (currentHP, entry.max);
+        RefreshSlider();
+    }
+
+    /// <summary>Called by BossHealth.DieRoutine() when a boss dies. Hides bar only when all bosses are dead.</summary>
+    public void UnregisterBoss(int instanceID)
+    {
+        trackedBosses.Remove(instanceID);
+        if (trackedBosses.Count == 0)
+        {
+            StartCoroutine(HideRoutine());
+        }
+        else
+        {
+            RefreshSlider();
+            RefreshLabels();
+        }
+    }
+
+    // ── Internals ─────────────────────────────────────────────────────────────
+
+    private void RefreshSlider()
+    {
+        int totalCurrent = 0, totalMax = 0;
+        foreach (var b in trackedBosses.Values)
+        {
+            totalCurrent += b.current;
+            totalMax     += b.max;
+        }
         if (healthSlider != null)
         {
-            healthSlider.maxValue = maxHealth;
-            healthSlider.value    = maxHealth;
+            healthSlider.maxValue = Mathf.Max(totalMax, 1);
+            healthSlider.value    = totalCurrent;
         }
-        gameObject.SetActive(true);
-        StartCoroutine(FadeRoutine(0f, 1f));
     }
 
-    /// <summary>Update slider value as boss takes damage.</summary>
-    public void UpdateHealth(int currentHealth)
+    private void RefreshLabels()
     {
-        if (healthSlider != null) healthSlider.value = currentHealth;
-    }
-
-    /// <summary>Update phase label when boss phase changes.</summary>
-    public void UpdatePhaseText(int phase)
-    {
-        if (phaseText != null) phaseText.text = $"Phase {phase}";
-    }
-
-    /// <summary>Fade out and hide after boss death.</summary>
-    public void Hide()
-    {
-        StartCoroutine(HideRoutine());
+        int count = trackedBosses.Count;
+        if (bossNameText != null)
+            bossNameText.text = "BOSS BATTLE";
+        if (phaseText != null)
+            phaseText.text = count > 1 ? $"{count} Bosses Remaining" : "Final Boss!";
     }
 
     private IEnumerator HideRoutine()
@@ -62,6 +109,7 @@ public class BossHealthBarUI : MonoBehaviour
     private IEnumerator FadeRoutine(float from, float to)
     {
         if (canvasGroup == null) yield break;
+        isFading = true;
         float elapsed = 0f;
         canvasGroup.alpha = from;
         while (elapsed < fadeDuration)
@@ -71,5 +119,6 @@ public class BossHealthBarUI : MonoBehaviour
             yield return null;
         }
         canvasGroup.alpha = to;
+        isFading = false;
     }
 }
