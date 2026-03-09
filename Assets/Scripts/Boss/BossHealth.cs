@@ -13,6 +13,12 @@ public class BossHealth : MonoBehaviour
     [SerializeField] private int startingHealth = 150;
     [SerializeField] private float knockbackThrust = 8f;
 
+    [Header("Level Scaling")]
+    [SerializeField] private int healthScalingFactor = 30; // HP gained per player level above 1
+
+    [Header("Rewards")]
+    [SerializeField] private int xpReward = 300; // XP awarded on death (higher than normal enemies)
+
     [Header("Phase Thresholds (fraction of max HP)")]
     [SerializeField] private float phase2Threshold = 0.66f;
     [SerializeField] private float phase3Threshold = 0.33f;
@@ -48,12 +54,25 @@ public class BossHealth : MonoBehaviour
 
     private void Start()
     {
+        // Scale HP based on player level (same pattern as EnemyHealth)
+        int playerLevel = (PlayerLevel.Instance != null) ? PlayerLevel.Instance.CurrentLevel : 1;
+        startingHealth = startingHealth + (playerLevel - 1) * healthScalingFactor;
+
         currentHealth = startingHealth;
         // includeInactive: true — panel starts SetActive(false) so normal Find won't see it
         bossUI = FindObjectOfType<BossHealthBarUI>(true);
         bossUI?.InitBoss(gameObject.name.Replace("(Clone)", "").Trim(), startingHealth);
 
         // Wire phase changes → health bar label
+        OnPhaseChanged += phase => bossUI?.UpdatePhaseText(phase);
+    }
+
+    /// <summary>Allows another BossHealth to hand off the UI reference when it dies.</summary>
+    public void SetBossUI(BossHealthBarUI ui)
+    {
+        bossUI = ui;
+        bossUI?.InitBoss(gameObject.name.Replace("(Clone)", "").Trim(), startingHealth);
+        bossUI?.UpdateHealth(currentHealth);
         OnPhaseChanged += phase => bossUI?.UpdatePhaseText(phase);
     }
 
@@ -105,8 +124,35 @@ public class BossHealth : MonoBehaviour
         if (deathVFXPrefab != null)
             Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
 
-        GetComponent<PickupSpawner>()?.DropItems();
-        bossUI?.Hide();
+        // Boss drops more items than regular enemies
+        GetComponent<PickupSpawner>()?.DropBossItems();
+
+        // Grant XP reward
+        if (PlayerLevel.Instance != null)
+            PlayerLevel.Instance.AddXP(xpReward);
+
+        // Only hide the HP bar if no other bosses remain alive.
+        // If another boss is still alive, hand off the UI to that boss.
+        BossHealth nextLiving = null;
+        foreach (var boss in FindObjectsOfType<BossHealth>())
+        {
+            if (boss != this && !boss.IsDead)
+            {
+                nextLiving = boss;
+                break;
+            }
+        }
+
+        if (nextLiving != null)
+        {
+            nextLiving.SetBossUI(bossUI);
+        }
+        else
+        {
+            bossUI?.Hide();
+        }
+        bossUI = null; // this boss no longer controls the UI
+
         OnBossDied?.Invoke();
         Destroy(gameObject);
     }

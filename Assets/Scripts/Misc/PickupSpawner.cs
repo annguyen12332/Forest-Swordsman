@@ -46,4 +46,33 @@ public class PickupSpawner : MonoBehaviour
             Instantiate(gemPickup, transform.position, Quaternion.identity);
         }
     }
+
+    /// <summary>
+    /// Boss death drops: guaranteed large gold reward, doubled gem/boom chance,
+    /// and always includes a health globe.
+    /// </summary>
+    public void DropBossItems()
+    {
+        // Always drop health globe after boss
+        if (healthGlobe != null)
+            Instantiate(healthGlobe, transform.position, Quaternion.identity);
+
+        // Guaranteed 5-10 gold coins (much more than normal enemies)
+        if (goldCoin != null)
+        {
+            int goldAmount = Random.Range(5, 11);
+            for (int i = 0; i < goldAmount; i++)
+                Instantiate(goldCoin, transform.position, Quaternion.identity);
+        }
+
+        // Double boom drop chance
+        int boomRoll = Random.Range(1, 101);
+        if (boomRoll <= Mathf.Min(boomDropChance * 2, 100) && boomPickup != null)
+            Instantiate(boomPickup, transform.position, Quaternion.identity);
+
+        // Double gem drop chance
+        int gemRoll = Random.Range(1, 101);
+        if (gemRoll <= Mathf.Min(gemDropChance * 2, 100) && gemPickup != null)
+            Instantiate(gemPickup, transform.position, Quaternion.identity);
+    }
 }
