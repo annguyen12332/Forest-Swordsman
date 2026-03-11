@@ -46,6 +46,11 @@ public class BossSequenceManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        if (bannerCanvasGroup != null)
+        {
+            bannerCanvasGroup.blocksRaycasts = false;
+            bannerCanvasGroup.interactable = false;
+        }
     }
 
     private void Start()

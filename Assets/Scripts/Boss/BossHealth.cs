@@ -59,8 +59,13 @@ public class BossHealth : MonoBehaviour
         startingHealth = startingHealth + (playerLevel - 1) * healthScalingFactor;
 
         currentHealth = startingHealth;
-        // includeInactive: true — panel starts SetActive(false) so normal Find won't see it
-        bossUI = FindObjectOfType<BossHealthBarUI>(true);
+        // FindObjectOfType with includeInactive=true only finds objects whose parents are active. 
+        // We use Resources.FindObjectsOfTypeAll to ensure we can find it even if the whole canvas is off.
+        var uiElements = Resources.FindObjectsOfTypeAll<BossHealthBarUI>();
+        if (uiElements.Length > 0)
+        {
+            bossUI = uiElements[0];
+        }
         bossUI?.RegisterBoss(GetInstanceID(), startingHealth);
     }
 
