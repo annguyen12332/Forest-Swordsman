@@ -9,6 +9,9 @@ public class ActiveInventory : MonoBehaviour
     public int ActiveSlotIndexNum => activeSlotIndexNum;
 
     private PlayerControls playerControls;
+    
+    [Header("Item References")]
+    [SerializeField] private WeaponInfo bombInfo;
 
     private void Awake()
     {
@@ -25,6 +28,12 @@ public class ActiveInventory : MonoBehaviour
     private void Start()
     {
         playerControls.Inventory.Keyboard.performed += ctx => ToggleActiveSlot((int)ctx.ReadValue<float>());
+        
+        // Khôi phục mìn đã lưu
+        if (SaveManager.Instance != null && SaveManager.Instance.Data.bombCount > 0 && bombInfo != null)
+        {
+            AddItem(bombInfo, SaveManager.Instance.Data.bombCount);
+        }
     }
 
     private void OnEnable()
@@ -87,6 +96,7 @@ public class ActiveInventory : MonoBehaviour
             if (slot.GetWeaponInfo() == weaponInfo)
             {
                 slot.AddToCount(amount);
+                UpdateSaveData(weaponInfo.name, slot.GetCount());
                 return;
             }
         }
@@ -98,9 +108,19 @@ public class ActiveInventory : MonoBehaviour
             if (slot.IsEmpty())
             {
                 slot.SetWeaponInfo(weaponInfo, amount);
+                UpdateSaveData(weaponInfo.name, slot.GetCount());
                 ChangeActiveWeapon();
                 return;
             }
+        }
+    }
+
+    private void UpdateSaveData(string weaponName, int count)
+    {
+        if (SaveManager.Instance != null && (weaponName == "Boom" || weaponName == "BoomInfo"))
+        {
+            SaveManager.Instance.Data.bombCount = count;
+            SaveManager.Instance.SaveGame();
         }
     }
 
@@ -155,7 +175,10 @@ public class ActiveInventory : MonoBehaviour
         
         if (inventorySlot.GetWeaponInfo() != null && inventorySlot.GetCount() > 0)
         {
+            string wName = inventorySlot.GetWeaponInfo().name;
             inventorySlot.UseItem();
+            UpdateSaveData(wName, inventorySlot.GetCount());
+
             if (inventorySlot.GetWeaponInfo() == null)
             {
                 ChangeActiveWeapon();

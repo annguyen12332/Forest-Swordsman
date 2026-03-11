@@ -12,6 +12,9 @@ public class GameData
     // Lưu lượng tim (Hearts) trong hành trang
     public int heartCount = 0;
 
+    // Lưu lượng bom trong ActiveInventory
+    public int bombCount = 0;
+
     // Lưu lượng kinh nghiệm và cấp độ
     public int playerLevel = 1;
     public int playerXP = 0;

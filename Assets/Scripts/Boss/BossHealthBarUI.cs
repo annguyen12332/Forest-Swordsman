@@ -28,7 +28,12 @@ public class BossHealthBarUI : MonoBehaviour
 
     private void Awake()
     {
-        if (canvasGroup != null) canvasGroup.alpha = 0f;
+        if (canvasGroup != null) 
+        {
+            canvasGroup.alpha = 0f;
+            canvasGroup.blocksRaycasts = false;
+            canvasGroup.interactable = false;
+        }
     }
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -45,8 +50,20 @@ public class BossHealthBarUI : MonoBehaviour
         if (!gameObject.activeSelf)
         {
             gameObject.SetActive(true);
+            
+            // Also ensure the parent is active in case the whole Canvas was disabled
+            if (transform.parent != null && !transform.parent.gameObject.activeSelf)
+            {
+                transform.parent.gameObject.SetActive(true);
+            }
+
             if (!isFading) StartCoroutine(FadeRoutine(0f, 1f));
         }
+        else if (canvasGroup != null && canvasGroup.alpha <= 0f && !isFading)
+        {
+            StartCoroutine(FadeRoutine(0f, 1f));
+        }
+        
         RefreshLabels();
     }
 
@@ -98,6 +115,12 @@ public class BossHealthBarUI : MonoBehaviour
             bossNameText.text = "BOSS BATTLE";
         if (phaseText != null)
             phaseText.text = count > 1 ? $"{count} Bosses Remaining" : "Final Boss!";
+    }
+
+    public void UpdatePhaseText(int phase)
+    {
+        if (phaseText != null)
+            phaseText.text = $"Phase {phase}";
     }
 
     private IEnumerator HideRoutine()

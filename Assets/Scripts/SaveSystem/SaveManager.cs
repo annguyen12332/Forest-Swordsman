@@ -58,6 +58,9 @@ public class SaveManager : Singleton<SaveManager>
         Data = new GameData();
         if (File.Exists(saveFilePath))
             File.Delete(saveFilePath);
+            
+        // Ghi đè file save thành bản rỗng ngay lập tức để tránh các object cũ lúc unload vớt vát Data
+        SaveGame();
         Debug.Log("Đã xóa save cũ, bắt đầu game mới.");
     }
 
