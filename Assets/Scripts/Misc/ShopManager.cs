@@ -2,8 +2,10 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 
-public class ShopManager : Singleton<ShopManager>
+public class ShopManager : MonoBehaviour
 {
+    public static ShopManager Instance { get; private set; }
+
     [Header("UI References")]
     [SerializeField] private GameObject shopPanel;
     [SerializeField] private TMP_Text notificationText;
@@ -22,9 +24,15 @@ public class ShopManager : Singleton<ShopManager>
 
     public bool IsOpen => shopPanel != null && shopPanel.activeSelf;
 
-    protected override void Awake()
+    protected void Awake()
     {
-        base.Awake();
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        Instance = this;
+
         if (shopPanel != null) shopPanel.SetActive(false);
         if (notificationText != null) notificationText.gameObject.SetActive(false);
         if (closeButton != null) closeButton.onClick.AddListener(CloseShop);

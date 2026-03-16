@@ -16,7 +16,7 @@ public class PlayerLevel : Singleton<PlayerLevel>
 
     [Header("UI References")]
     [SerializeField] private Slider xpSlider;
-    [SerializeField] private TMP_Text levelText; // TextMeshPro dùng cho hiển thị Level
+    [SerializeField] private TMP_Text levelText; 
     
     // Tìm UI theo tên nếu chưa gán
     const string XP_SLIDER_TEXT = "XP Slider";
