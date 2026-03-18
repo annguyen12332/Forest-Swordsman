@@ -56,7 +56,18 @@ public class BossHealth : MonoBehaviour
     {
         // Scale HP based on player level (same pattern as EnemyHealth)
         int playerLevel = (PlayerLevel.Instance != null) ? PlayerLevel.Instance.CurrentLevel : 1;
-        startingHealth = startingHealth + (playerLevel - 1) * healthScalingFactor;
+        
+        float difficultyMultiplier = 1f;
+        float difficultyIncreasePerLevel = healthScalingFactor;
+        
+        if (DifficultyManager.Instance != null)
+        {
+            var diffSettings = DifficultyManager.Instance.GetCurrentSettings();
+            difficultyMultiplier = diffSettings.baseHpMultiplier;
+            difficultyIncreasePerLevel = diffSettings.hpIncreasePerLevel * 5f; // Boss health scaling should probably be higher, so maybe * 5 to the base multiplier, but actually just use the Difficulty multiplier.
+        }
+
+        startingHealth = Mathf.RoundToInt((startingHealth * difficultyMultiplier) + ((playerLevel - 1) * healthScalingFactor * difficultyMultiplier));
 
         currentHealth = startingHealth;
         // FindObjectOfType with includeInactive=true only finds objects whose parents are active. 
