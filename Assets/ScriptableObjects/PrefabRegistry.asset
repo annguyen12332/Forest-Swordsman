@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95f4c7481a8200444b033032848fc0b5, type: 3}
+  m_Name: PrefabRegistry
+  m_EditorClassIdentifier: Assembly-CSharp::PrefabRegistry
+  groundPrefabs:
+  - {fileID: 0}
+  - {fileID: 1312013248436693342, guid: b6bdcffb72056c14481a3393cefbd5c4, type: 3}
+  - {fileID: 2824283551003357071, guid: fa1c60c9c48e2ec46aeaa2fca9228073, type: 3}
+  - {fileID: 9026741772960773714, guid: 5e2fc023ae89d8a4cb0c4a81ef0a7d0b, type: 3}
+  - {fileID: 7596706404168142900, guid: d7dd8d8d916b2e040a98d92b9960be4b, type: 3}
+  objectPrefabs:
+  - {fileID: 0}
+  - {fileID: 2097973770873165061, guid: aee9da07a174fe14c839b79785fdb1b5, type: 3}
+  - {fileID: 651797443950723605, guid: 96be2021bf0ab5b45a0970f796308218, type: 3}
+  - {fileID: 8496722188525525707, guid: f7f859bb741df06489de75ca44cb03c7, type: 3}
+  enemyPrefabs:
+  - {fileID: 0}
+  - {fileID: 7056672189522047085, guid: e6014241f0d5d614bb6e34abd4ded203, type: 3}
+  - {fileID: 2056388834609229727, guid: 9e8473f541ef54d489d746ba353f1318, type: 3}
+  - {fileID: 7776850548387091970, guid: 99312f71ca66d5a4fad479e0a0db59cc, type: 3}
