@@ -59,6 +59,13 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
              }
         }
 
+        // --- BUG FIX ---
+        // Ensure that any stuck weapon colliders from previous weapons (e.g., interrupted attacks during Save & Quit) are turned off
+        if (PlayerController.Instance != null && PlayerController.Instance.GetWeaponCollider() != null)
+        {
+            PlayerController.Instance.GetWeaponCollider().gameObject.SetActive(false);
+        }
+
         AttackCooldown();
         timeBetweenAttacks = (CurrentActiveWeapon as IWeapon).GetWeaponInfo().weaponCooldown;
     }
@@ -66,6 +73,10 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
     public void WeaponNull()
     {
         CurrentActiveWeapon = null;
+        if (PlayerController.Instance != null && PlayerController.Instance.GetWeaponCollider() != null)
+        {
+            PlayerController.Instance.GetWeaponCollider().gameObject.SetActive(false);
+        }
     }
 
     private void AttackCooldown()

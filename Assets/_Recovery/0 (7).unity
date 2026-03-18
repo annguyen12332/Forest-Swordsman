@@ -8380,6 +8380,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5697530421835459679, guid: f7f859bb741df06489de75ca44cb03c7, type: 3}
   m_PrefabInstance: {fileID: 1082515903}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1142372185
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1142372187}
+  - component: {fileID: 1142372186}
+  m_Layer: 0
+  m_Name: MapProgressionManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1142372186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142372185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77d18761a78ec2048a5e5167c57ee3ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapProgressionManager
+  levelMilestone: 3
+  mapWidth: 15
+  mapHeight: 15
+  grassId: 1
+  waterId: 2
+  treeId: 3
+  enemyId: 4
+  rockId: 5
+  waterPercent: 18
+  treePercent: 21
+  rockPercent: 10
+  enemyPercent: 10
+  waterClusterSize: 5
+--- !u!4 &1142372187
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142372185}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.11322, y: -4.44029, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1151294603
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8518,87 +8575,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5697530421835459679, guid: f7f859bb741df06489de75ca44cb03c7, type: 3}
   m_PrefabInstance: {fileID: 876858485313262525}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1280157750
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1280157752}
-  - component: {fileID: 1280157751}
-  m_Layer: 0
-  m_Name: MapManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1280157751
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1280157750}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef4785ca3f6a60945bc552cf0efe4159, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MapGenerator
-  tileMappings:
-  - id: 1
-    tile: {fileID: 11400000, guid: 9836a91978f5160479b7dce9c7494a59, type: 2}
-    targetTilemap: {fileID: 643906265}
-    prefab: {fileID: 0}
-    parentTransform: {fileID: 0}
-  - id: 2
-    tile: {fileID: 11400000, guid: f5ebe5df148ec9c45bd006832209d3b2, type: 2}
-    targetTilemap: {fileID: 2143065476}
-    prefab: {fileID: 0}
-    parentTransform: {fileID: 0}
-  - id: 3
-    tile: {fileID: 0}
-    targetTilemap: {fileID: 0}
-    prefab: {fileID: 1613075901}
-    parentTransform: {fileID: 1304844289}
-  - id: 4
-    tile: {fileID: 0}
-    targetTilemap: {fileID: 0}
-    prefab: {fileID: 2056388834609229727, guid: 9e8473f541ef54d489d746ba353f1318, type: 3}
-    parentTransform: {fileID: 317939826}
-  - id: 5
-    tile: {fileID: 0}
-    targetTilemap: {fileID: 0}
-    prefab: {fileID: 7391636756424446011}
-    parentTransform: {fileID: 1304844289}
-  - id: 6
-    tile: {fileID: 0}
-    targetTilemap: {fileID: 0}
-    prefab: {fileID: 7776850548387091970, guid: 99312f71ca66d5a4fad479e0a0db59cc, type: 3}
-    parentTransform: {fileID: 317939826}
-  - id: 7
-    tile: {fileID: 0}
-    targetTilemap: {fileID: 0}
-    prefab: {fileID: 7056672189522047085, guid: e6014241f0d5d614bb6e34abd4ded203, type: 3}
-    parentTransform: {fileID: 317939826}
-  cellSize: 2.5
---- !u!4 &1280157752
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1280157750}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.435, y: 0.39, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1304844288
 GameObject:
   m_ObjectHideFlags: 0
@@ -15556,11 +15532,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 96be2021bf0ab5b45a0970f796308218, type: 3}
---- !u!1 &1613075901 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 651797443950723605, guid: 96be2021bf0ab5b45a0970f796308218, type: 3}
-  m_PrefabInstance: {fileID: 1613075900}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1627071843 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9005234663755018983, guid: 9e8473f541ef54d489d746ba353f1318, type: 3}
@@ -29082,11 +29053,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c89d4535567e2824fbc87150597e0b10, type: 3}
---- !u!1 &7391636756424446011 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4566228551219232723, guid: c89d4535567e2824fbc87150597e0b10, type: 3}
-  m_PrefabInstance: {fileID: 7391636756424446010}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8495777617230111577
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29518,4 +29484,4 @@ SceneRoots:
   - {fileID: 8495777617230111577}
   - {fileID: 1721102051}
   - {fileID: 9109451648484508465}
-  - {fileID: 1280157752}
+  - {fileID: 1142372187}

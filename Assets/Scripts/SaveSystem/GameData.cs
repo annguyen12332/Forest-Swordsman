@@ -24,6 +24,9 @@ public class GameData
 
     // Lưu tên scene cuối cùng để Continue load đúng chỗ
     public string lastSceneName = "";
+
+    // Lưu trữ bản đồ đã được sinh ngẫu nhiên cho từng scene
+    public List<SavedMapData> savedMaps = new List<SavedMapData>();
 }
 
 [System.Serializable]
@@ -31,4 +34,13 @@ public class WeaponSaveData
 {
     public string weaponName;
     public int upgradeLevel;
+}
+
+[System.Serializable]
+public class SavedMapData
+{
+    public string sceneName;
+    public int width;
+    public int height;
+    public List<int> grid; // Flattened 2D array (list 1 chiều) vì JsonUtility không hỗ trợ int[,]
 }
