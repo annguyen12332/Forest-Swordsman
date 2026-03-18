@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class PlayerLevel : Singleton<PlayerLevel>
 {
+    public static Action<int> OnLevelUpEvent;
     public int CurrentLevel { get; private set; } = 1;
     public int CurrentXP { get; private set; } = 0;
 
@@ -68,13 +70,16 @@ public class PlayerLevel : Singleton<PlayerLevel>
 
             // Khi lên cấp, tăng máu và hồi đầy máu
             PlayerHealth.Instance.IncreaseMaxHealth(1); 
+            
+            OnLevelUpEvent?.Invoke(CurrentLevel);
             // Hiệu ứng lên cấp nếu có thể thêm sau ở đây
         }
     }
 
     public int GetRequiredXPForNextLevel()
     {
-        return Mathf.RoundToInt(baseXPRequirement * Mathf.Pow(xpMultiplierPerLevel, CurrentLevel - 1));
+        int required = Mathf.RoundToInt(baseXPRequirement * Mathf.Pow(xpMultiplierPerLevel, CurrentLevel - 1));
+        return Mathf.Max(1, required); // Đảm bảo luôn >= 1 để tránh infinite loop
     }
 
     private void UpdateUI()
