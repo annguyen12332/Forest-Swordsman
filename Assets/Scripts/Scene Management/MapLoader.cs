@@ -84,6 +84,14 @@ public class MapLoader : Singleton<MapLoader>
     ClearLayer(objectRoot);
     ClearLayer(enemyRoot);
 
+    // Dọn dẹp thêm các phần tử linh hoạt (Enemy, Object, Drop) có thể được đặt thủ công hoặc bị lọt ra ngoài root
+    foreach (var e in FindObjectsOfType<EnemyAI>()) { if (e) Destroy(e.gameObject); }
+    foreach (var d in FindObjectsOfType<Destructible>()) { if (d) Destroy(d.gameObject); }
+    foreach (var ind in FindObjectsOfType<Indestructible>()) { if (ind) Destroy(ind.gameObject); }
+    foreach (var p in FindObjectsOfType<Pickups>()) { if (p) Destroy(p.gameObject); }
+    // Nếu có Projectile đang bay cũng dọn luôn
+    foreach (var pr in FindObjectsOfType<Projectile>()) { if (pr) Destroy(pr.gameObject); }
+
     SpawnLayer(data.layers, LayerType.Ground, data.tileSize, groundRoot, out int spawnedGround);
     SpawnLayer(data.layers, LayerType.Objects, data.tileSize, objectRoot, out int spawnedObjects);
     SpawnLayer(data.layers, LayerType.Enemies, data.tileSize, enemyRoot, out int spawnedEnemies);
@@ -165,11 +173,27 @@ public class MapLoader : Singleton<MapLoader>
 
   private GameObject GetPrefab(LayerType type, int index)
   {
+    GameObject LoadFromList(List<GameObject> list, int id, int fallbackOffset)
+    {
+        if (id <= 0) return null;
+        if (id < list.Count && list[id] != null) return list[id];
+        
+        // Xử lý Global ID (GIDs) từ Tiled hoặc các tool khác
+        int localId = id - fallbackOffset;
+        if (localId > 0 && localId < list.Count && list[localId] != null) return list[localId];
+        
+        // Fallback an toàn cuối cùng
+        int modId = id % Mathf.Max(1, list.Count);
+        if (modId > 0 && modId < list.Count && list[modId] != null) return list[modId];
+        
+        return null;
+    }
+
     switch (type)
     {
-      case LayerType.Ground:  return registry.GetGroundPrefab(index);
-      case LayerType.Objects: return registry.GetObjectPrefab(index);
-      case LayerType.Enemies: return registry.GetEnemyPrefab(index);
+      case LayerType.Ground:  return LoadFromList(registry.groundPrefabs, index, 0);
+      case LayerType.Objects: return LoadFromList(registry.objectPrefabs, index, 1);
+      case LayerType.Enemies: return LoadFromList(registry.enemyPrefabs, index, 4);
       default: return null;
     }
   }

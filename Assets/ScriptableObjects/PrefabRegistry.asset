@@ -16,8 +16,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 1312013248436693342, guid: b6bdcffb72056c14481a3393cefbd5c4, type: 3}
   - {fileID: 2824283551003357071, guid: fa1c60c9c48e2ec46aeaa2fca9228073, type: 3}
-  - {fileID: 9026741772960773714, guid: 5e2fc023ae89d8a4cb0c4a81ef0a7d0b, type: 3}
-  - {fileID: 7596706404168142900, guid: d7dd8d8d916b2e040a98d92b9960be4b, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
   objectPrefabs:
   - {fileID: 0}
   - {fileID: 2097973770873165061, guid: aee9da07a174fe14c839b79785fdb1b5, type: 3}
