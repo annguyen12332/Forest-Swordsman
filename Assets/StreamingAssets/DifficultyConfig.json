@@ -1,0 +1,17 @@
+{
+    "easy": {
+        "baseHpMultiplier": 0.800000011920929,
+        "hpIncreasePerLevel": 1.0,
+        "attackMultiplier": 0.800000011920929
+    },
+    "normal": {
+        "baseHpMultiplier": 1.0,
+        "hpIncreasePerLevel": 2.0,
+        "attackMultiplier": 1.0
+    },
+    "hard": {
+        "baseHpMultiplier": 2.0,
+        "hpIncreasePerLevel": 3.0,
+        "attackMultiplier": 1.5
+    }
+}

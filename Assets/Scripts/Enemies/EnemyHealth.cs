@@ -27,7 +27,18 @@ public class EnemyHealth : MonoBehaviour
     {
         // Tính máu dựa trên cấp độ người chơi
         int playerLevel = (PlayerLevel.Instance != null) ? PlayerLevel.Instance.CurrentLevel : 1;
-        int scaledHealth = startingHealth + (playerLevel - 1) * healthScalingFactor;
+        
+        float difficultyMultiplier = 1f;
+        float difficultyIncreasePerLevel = healthScalingFactor;
+        
+        if (DifficultyManager.Instance != null)
+        {
+            var diffSettings = DifficultyManager.Instance.GetCurrentSettings();
+            difficultyMultiplier = diffSettings.baseHpMultiplier;
+            difficultyIncreasePerLevel = diffSettings.hpIncreasePerLevel;
+        }
+
+        int scaledHealth = Mathf.RoundToInt((startingHealth * difficultyMultiplier) + ((playerLevel - 1) * difficultyIncreasePerLevel));
 
         currentHealth = scaledHealth;
         enemyHealthBar?.SetMaxHealth(scaledHealth);
