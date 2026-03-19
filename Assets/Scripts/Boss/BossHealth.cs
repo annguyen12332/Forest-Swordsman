@@ -78,6 +78,10 @@ public class BossHealth : MonoBehaviour
             bossUI = uiElements[0];
         }
         bossUI?.RegisterBoss(GetInstanceID(), startingHealth);
+        
+        // --- LOG KIỂM TRA ĐỘ KHÓ VÀ LEVEL ---
+        string diffName = DifficultyManager.Instance != null ? DifficultyManager.Instance.CurrentDifficulty.ToString() : "N/A";
+        Debug.Log($"[BossHealth] Spawn Boss: {gameObject.name} | Độ khó: {diffName} | Level Player: {playerLevel} | Máu lúc này: {currentHealth}");
     }
 
     // ── Public API ────────────────────────────────────────────────────────────
