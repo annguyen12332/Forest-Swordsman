@@ -29,19 +29,24 @@ public class EnemyHealth : MonoBehaviour
         int playerLevel = (PlayerLevel.Instance != null) ? PlayerLevel.Instance.CurrentLevel : 1;
         
         float difficultyMultiplier = 1f;
-        float difficultyIncreasePerLevel = healthScalingFactor;
+        float difficultyIncreaseMultiplier = 1f;
         
         if (DifficultyManager.Instance != null)
         {
             var diffSettings = DifficultyManager.Instance.GetCurrentSettings();
             difficultyMultiplier = diffSettings.baseHpMultiplier;
-            difficultyIncreasePerLevel = diffSettings.hpIncreasePerLevel;
+            difficultyIncreaseMultiplier = diffSettings.hpIncreasePerLevel;
         }
 
-        int scaledHealth = Mathf.RoundToInt((startingHealth * difficultyMultiplier) + ((playerLevel - 1) * difficultyIncreasePerLevel));
+        // SỬA LẠI: Máu gốc * nhân hệ số + (Số level tăng thêm) * (Lượng tăng ngầm định mỗi con quái * nhân hệ số json)
+        int scaledHealth = Mathf.RoundToInt((startingHealth * difficultyMultiplier) + ((playerLevel - 1) * (healthScalingFactor * difficultyIncreaseMultiplier)));
 
         currentHealth = scaledHealth;
         enemyHealthBar?.SetMaxHealth(scaledHealth);
+        
+        // --- LOG KIỂM TRA ĐỘ KHÓ VÀ LEVEL ---
+        string diffName = DifficultyManager.Instance != null ? DifficultyManager.Instance.CurrentDifficulty.ToString() : "N/A";
+        Debug.Log($"[EnemyHealth] Spawn quái: {gameObject.name} | Độ khó: {diffName} | Level Player: {playerLevel} | Máu lúc này: {scaledHealth}");
     }
 
     public void TakeDamage(int damage)
